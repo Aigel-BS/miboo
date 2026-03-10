@@ -1,21 +1,21 @@
 <?= $this->Html->css(
 	array(
-		'/vendors/select2/css/select2.min',
-		'/vendors/datatables/css/scroller.bootstrap.min',
-		'/vendors/datatables/css/colReorder.bootstrap.min',
-		'/vendors/datatables/css/dataTables.bootstrap.min',
-		'pages/dataTables.bootstrap',
-		'plugincss/responsive.dataTables.min',
-		'pages/tables',
-		'/vendors/datepicker/css/bootstrap-datepicker.min',
+	'/vendors/select2/css/select2.min',
+	'/vendors/datatables/css/scroller.bootstrap.min',
+	'/vendors/datatables/css/colReorder.bootstrap.min',
+	'/vendors/datatables/css/dataTables.bootstrap.min',
+	'pages/dataTables.bootstrap',
+	'plugincss/responsive.dataTables.min',
+	'pages/tables',
+	'/vendors/datepicker/css/bootstrap-datepicker.min',
 
-		'/vendors/bootstrap-switch/css/bootstrap-switch.min',
-		'/vendors/switchery/css/switchery.min',
-		'/vendors/radio_css/css/radiobox.min',
-		'/vendors/checkbox_css/css/checkbox.min',
-		'pages/radio_checkbox'
-	),
-	array('inline'=>false));
+	'/vendors/bootstrap-switch/css/bootstrap-switch.min',
+	'/vendors/switchery/css/switchery.min',
+	'/vendors/radio_css/css/radiobox.min',
+	'/vendors/checkbox_css/css/checkbox.min',
+	'pages/radio_checkbox'
+),
+	array('inline' => false));
 ?>
 
 <style>
@@ -70,72 +70,76 @@
 							<tr>
 								<th class="sticky-col">Agencia</th>
 								<?php
-								// Encabezados dinámicos de las semanas (Columnas)
-								foreach ($semanas_unicas as $key=>$semana_anio):
-									echo '<th>';
-									echo h($semana_anio) . '<br>'.$semanas_periodos[$key];
-									echo '</th>';
-								endforeach;
-								?>
-								<th>Total Ganado</th>
-							</tr>
-							</thead>
-							<tbody>
-							<?php foreach ($tabla_final as $fila): ?>
-								<tr>
-									<td style="font-weight: bold;"><?php echo h($comisionistas[$fila['comisionista_id']]); ?></td>
+// Encabezados dinámicos de las semanas (Columnas)
+foreach ($semanas_unicas as $semana_anio):
+	echo '<th>';
+	echo h($semana_anio) . '<br>' . $semanas_periodos[$semana_anio];
+	echo '</th>';
+endforeach;
+?>
+<th>Total Ganado</th>
+</tr>
+</thead>
+<tbody>
+	<?php foreach ($tabla_final as $fila): ?>
+	<tr>
+		<td style="font-weight: bold;">
+			<?php echo h($comisionistas[$fila['comisionista_id']]); ?>
+		</td>
 
-									<?php
-									// Columnas dinámicas de las ganancias por semana
-									foreach ($semanas_unicas as $semana_anio):
-										// Accedemos al valor que está garantizado que existe gracias al procesamiento en el controlador
-										$comision = $fila[$semana_anio];
-										echo '<td>' . number_format($comision, 2) ." <span style='float:right'>".$this->Html->link('<i class="fa fa-list"></i>',array('controller'=>'ganancias','action'=>'reporte_detalle',$fila['comisionista_id'],$semana_anio),array('escape'=>false)).'</span> </td>';									endforeach;
-									?>
+		<?php
+	// Columnas dinámicas de las ganancias por semana
+	foreach ($semanas_unicas as $semana_anio):
+		// Accedemos al valor que está garantizado que existe gracias al procesamiento en el controlador
+		$comision = $fila[$semana_anio];
+		echo '<td>' . number_format($comision, 2) . " <span style='float:right'>" . $this->Html->link('<i class="fa fa-list"></i>', array('controller' => 'ganancias', 'action' => 'reporte_detalle', $fila['comisionista_id'], $semana_anio), array('escape' => false)) . '</span> </td>';
+	endforeach;
+?>
 
-									<td style="font-weight: bold; background-color: #f0f0f0;">
-										<?php echo number_format($fila['Total'], 2); ?>
-									</td>
-								</tr>
-							<?php endforeach; ?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+		<td style="font-weight: bold; background-color: #f0f0f0;">
+			<?php echo number_format($fila['Total'], 2); ?>
+		</td>
+	</tr>
+	<?php
+endforeach; ?>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <script>
 
-	function validarDuplicado(input,numero){
-		var dataString = 'str='+ input.value;
+	function validarDuplicado(input, numero) {
+		var dataString = 'str=' + input.value;
 		$.ajax({
 			type: "POST",
-			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "getDuplicado"), TRUE); ?>' ,
+			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "getDuplicado"), TRUE); ?>',
 			data: dataString,
 			cache: false,
-			success: function(html) {
-				if (html==1){
-					switch (numero){
+			success: function (html) {
+				if (html == 1) {
+					switch (numero) {
 						case 1: //Email
-							document.getElementById('emailLabel').style="color:red";
-							document.getElementById('emailLabel').innerHTML="Email Duplicado";
+							document.getElementById('emailLabel').style = "color:red";
+							document.getElementById('emailLabel').innerHTML = "Email Duplicado";
 							break;
 						case 2:
-							document.getElementById('celularLabel').style="color:red";
-							document.getElementById('celularLabel').innerHTML="Celular Duplicado";
+							document.getElementById('celularLabel').style = "color:red";
+							document.getElementById('celularLabel').innerHTML = "Celular Duplicado";
 							break;
 					}
-				}else{
-					switch (numero){
+				} else {
+					switch (numero) {
 						case 1: //Email
-							document.getElementById('emailLabel').style="";
-							document.getElementById('emailLabel').innerHTML="Email";
+							document.getElementById('emailLabel').style = "";
+							document.getElementById('emailLabel').innerHTML = "Email";
 							break;
 						case 2:
-							document.getElementById('celularLabel').style="";
-							document.getElementById('celularLabel').innerHTML="Celular";
+							document.getElementById('celularLabel').style = "";
+							document.getElementById('celularLabel').innerHTML = "Celular";
 							break;
 					}
 				}
@@ -143,45 +147,45 @@
 		});
 	}
 
-	function activarJugador(id,input){
+	function activarJugador(id, input) {
 		var estado = input.checked ? 1 : 0
-		var dataString = 'id='+ id + '&estado='+estado;
+		var dataString = 'id=' + id + '&estado=' + estado;
 		console.log(dataString);
 		$.ajax({
 			type: "POST",
-			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "activar"), TRUE); ?>' ,
+			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "activar"), TRUE); ?>',
 			data: dataString,
 			cache: false,
-			success: function(html) {
+			success: function (html) {
 				console.log(html);
 			}
 		});
 
 	}
 
-	function addJugador(){
+	function addJugador() {
 		$('#addJugador').modal('show');
 		document.getElementById('tituloModalAddJugador').innerHTML = "<i class='fa fa-plus'></i>Nuevo Jugador";
 		document.getElementById('JugadorId').value = '';
 		document.getElementById('botonSubmitJugador').value = "Guardar Jugador";
 	}
 
-	function registrarPago(id_jugador){
+	function registrarPago(id_jugador) {
 		$('#addPago').modal('show');
 		document.getElementById('jugador_id_edit').value = id_jugador;
-		var dataString = 'id='+ id_jugador;
+		var dataString = 'id=' + id_jugador;
 		$.ajax({
 			type: "POST",
-			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "getJugador"), TRUE); ?>' ,
+			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "getJugador"), TRUE); ?>',
 			data: dataString,
 			cache: false,
-			success: function(html) {
+			success: function (html) {
 				document.getElementById('jugador_name').innerHTML = html.Jugador.nombre;
 			}
 		});
 	}
 
-	function editJugador(id){
+	function editJugador(id) {
 		$('#addJugador').modal('show');
 
 		document.getElementById('tituloModalAddJugador').innerHTML = "<i class='fa fa-edit'></i>Editar Jugador";
@@ -190,14 +194,14 @@
 		document.getElementById('cuentasBancarias').style.display = 'none';
 		document.getElementById('cuentas-container').style.display = 'none';
 		document.getElementById('JugadorId').value = id;
-		var dataString = 'id='+ id;
+		var dataString = 'id=' + id;
 
 		$.ajax({
 			type: "POST",
-			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "getJugador"), TRUE); ?>' ,
+			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "getJugador"), TRUE); ?>',
 			data: dataString,
 			cache: false,
-			success: function(html) {
+			success: function (html) {
 				document.getElementById('JugadorNombre').value = html.Jugador.nombre;
 				document.getElementById('JugadorRegistro').value = html.Jugador.registro;
 				document.getElementById('JugadorPassword').value = html.Jugador.password;
@@ -220,33 +224,33 @@
 <?php
 echo $this->Html->script(
 	array(
-		'/vendors/select2/js/select2',
-		'/vendors/datatables/js/jquery.dataTables.min',
-		'pluginjs/dataTables.tableTools',
-		'/vendors/datatables/js/dataTables.colReorder',
-		'/vendors/datatables/js/dataTables.bootstrap.min',
-		'/vendors/datatables/js/dataTables.buttons.min',
-		'pluginjs/jquery.dataTables.min',
-		'/vendors/datatables/js/dataTables.responsive.min',
-		'/vendors/datatables/js/dataTables.rowReorder.min',
-		'/vendors/datatables/js/buttons.colVis.min',
-		'/vendors/datatables/js/buttons.html5.min',
-		'/vendors/datatables/js/buttons.bootstrap.min',
-		'/vendors/datatables/js/buttons.print.min',
-		'/vendors/datatables/js/dataTables.scroller.min',
-		'/vendors/moment/js/moment.min',
-		'/vendors/datepicker/js/bootstrap-datepicker.min',
+	'/vendors/select2/js/select2',
+	'/vendors/datatables/js/jquery.dataTables.min',
+	'pluginjs/dataTables.tableTools',
+	'/vendors/datatables/js/dataTables.colReorder',
+	'/vendors/datatables/js/dataTables.bootstrap.min',
+	'/vendors/datatables/js/dataTables.buttons.min',
+	'pluginjs/jquery.dataTables.min',
+	'/vendors/datatables/js/dataTables.responsive.min',
+	'/vendors/datatables/js/dataTables.rowReorder.min',
+	'/vendors/datatables/js/buttons.colVis.min',
+	'/vendors/datatables/js/buttons.html5.min',
+	'/vendors/datatables/js/buttons.bootstrap.min',
+	'/vendors/datatables/js/buttons.print.min',
+	'/vendors/datatables/js/dataTables.scroller.min',
+	'/vendors/moment/js/moment.min',
+	'/vendors/datepicker/js/bootstrap-datepicker.min',
 
-		'/vendors/bootstrap-switch/js/bootstrap-switch.min',
-		'/vendors/switchery/js/switchery.min',
-		'pages/radio_checkbox'
-	),
-	array('inline'=>false));
+	'/vendors/bootstrap-switch/js/bootstrap-switch.min',
+	'/vendors/switchery/js/switchery.min',
+	'pages/radio_checkbox'
+),
+	array('inline' => false));
 ?>
 
 <script>
 	'use strict';
-	$(document).ready(function() {
+	$(document).ready(function () {
 		TableAdvanced.init();
 		$(".dataTables_scrollHeadInner .table").addClass("table-responsive");
 		$("#sample_5_wrapper table").removeClass("table-responsive");
@@ -256,10 +260,10 @@ echo $this->Html->script(
 			format: 'yyyy-mm-dd',
 			todayHighlight: true,
 			autoclose: true,
-			orientation:"bottom"
+			orientation: "bottom"
 		});
 
-		$(document).on('click', '.add-row', function(e) {
+		$(document).on('click', '.add-row', function (e) {
 			e.preventDefault();
 
 			//Agregar número a contador
@@ -273,7 +277,7 @@ echo $this->Html->script(
 			let newIndex = $('#cuentas-container .cuenta-row').length;
 
 			// Actualizar los nombres de los campos en la nueva fila
-			newRow.find('input').each(function() {
+			newRow.find('input').each(function () {
 				let oldName = $(this).attr('name');
 				let newName = oldName.replace(/\[\d+\]/, '[' + newIndex + ']');
 				$(this).attr('name', newName);
@@ -293,7 +297,7 @@ echo $this->Html->script(
 		});
 
 		// Función para quitar una fila
-		$(document).on('click', '.remove-row', function(e) {
+		$(document).on('click', '.remove-row', function (e) {
 			e.preventDefault();
 
 			let contador = document.getElementById('JugadorContador').value;
@@ -306,8 +310,8 @@ echo $this->Html->script(
 			rowToRemove.remove();
 
 			// Re-indexar los campos restantes
-			$('#cuentas-container .cuenta-row').each(function(index) {
-				$(this).find('input').each(function() {
+			$('#cuentas-container .cuenta-row').each(function (index) {
+				$(this).find('input').each(function () {
 					let oldName = $(this).attr('name');
 					let newName = oldName.replace(/\[\d+\]/, '[' + index + ']');
 					$(this).attr('name', newName);
@@ -316,9 +320,9 @@ echo $this->Html->script(
 		});
 
 	});
-	var TableAdvanced = function() {
+	var TableAdvanced = function () {
 		// ===============table 1====================
-		var initTable1 = function() {
+		var initTable1 = function () {
 			var table = $('#sample_1');
 			/* Table tools samples: https://www.datatables.net/release-datatables/extras/TableTools/ */
 			/* Set tabletools buttons and button container */
@@ -327,7 +331,7 @@ echo $this->Html->script(
 				buttons: [
 					'copy', 'csv', 'print'
 				],
-				order:[[0,'asc']],
+				order: [[0, 'asc']],
 				lengthMenu: [
 					[100, 300, 500, -1], // Values for the dropdown: 10, 25, 50, All
 					[100, 300, 500, "Todos"] // Display text for the dropdown
@@ -341,7 +345,7 @@ echo $this->Html->script(
 
 		return {
 			//main function to initiate the module
-			init: function() {
+			init: function () {
 				if (!jQuery().dataTable) {
 					return;
 				}

@@ -6,23 +6,8 @@ class GananciasController extends AppController
 
 	public function convertirSemana($year = null, $week = null)
 	{
-
-		// Si no se proporcionan, usa la semana y el año actuales
-
-
-		// Llama al método estático
 		$dates = DateUtility::getWeekRangeDates((int)$week, (int)$year, 'd-m-Y');
-
-		// Los datos para la vista
-		/*$this->set('weekDates', $dates);
-		 $this->set('currentWeek', $week);
-		 $this->set('currentYear', $year);*/
-
 		return ($dates['monday'] . " al " . $dates['sunday']);
-
-	// Ejemplo de salida:
-	// $dates['monday'] será "30-09-2024" (si hoy fuera la semana 40 de 2024)
-	// $dates['sunday'] será "06-10-2024"
 	}
 
 	function add()
@@ -53,41 +38,35 @@ class GananciasController extends AppController
 		if ($this->request->is('post')) {
 			$data = $this->request->data['Ganancia'];
 
-			// 1. Validar que la cuenta origen no sea la misma que la cuenta destino
 			if ($data['cuenta_origen'] === $data['cuenta_destino']) {
 				$this->Session->setFlash('La cuenta de origen no puede ser la misma que la cuenta de destino.', 'default', array('class' => 'alert alert-danger'));
 				return $this->redirect(array('action' => 'index'));
 			}
 
-			// 2. Validar que el monto sea positivo
 			if ($data['monto'] <= 0) {
 				$this->Session->setFlash('El monto debe ser un valor positivo.', 'default', array('class' => 'alert alert-danger'));
 				return $this->redirect(array('action' => 'index'));
 			}
 
-			// 3. Obtener el saldo actual de la cuenta de origen mediante una sumatoria
 			$saldoOrigen = $this->Ganancia->find('first', array(
 				'fields' => array('SUM(Ganancia.monto) as total_saldo'),
 				'conditions' => array('Ganancia.cuenta_id' => $data['cuenta_origen'])
 			));
-			$saldoActualOrigen = $saldoOrigen[0]['total_saldo'] ?: 0; // Si no hay movimientos, el saldo es 0
+			$saldoActualOrigen = $saldoOrigen[0]['total_saldo'] ?: 0;
 
-			// 4. Validar que haya saldo suficiente
 			if ($saldoActualOrigen < $data['monto']) {
 				$this->Session->setFlash('La cuenta de origen no tiene saldo suficiente.', 'default', array('class' => 'alert alert-danger'));
 				return $this->redirect(array('action' => 'index'));
 			}
 
-			// 5. Iniciar la transacción de la base de datos
 			$dataSource = $this->Ganancia->getDataSource();
 			$dataSource->begin();
 
 			try {
-				// 6. Crear los registros de movimiento (débito y crédito)
 				$movimientoOrigen = array(
 					'referencia' => $data['referencia'],
 					'cuenta_id' => $data['cuenta_origen'],
-					'monto' => $data['monto'], // Monto negativo para la salida
+					'monto' => $data['monto'],
 					'fecha_aplicacion' => $data['fecha_aplicacion'],
 					'tipo' => 'Transferencia Salida',
 					'fecha_registro' => date('Y-m-d H:i:s'),
@@ -97,27 +76,24 @@ class GananciasController extends AppController
 				$movimientoDestino = array(
 					'referencia' => $data['referencia'],
 					'cuenta_id' => $data['cuenta_destino'],
-					'monto' => $data['monto'], // Monto positivo para la entrada
+					'monto' => $data['monto'],
 					'fecha_aplicacion' => $data['fecha_aplicacion'],
 					'tipo' => 'Transferencia Entrada',
 					'fecha_registro' => date('Y-m-d H:i:s'),
 					'tipo_movimiento' => 1
 				);
 
-				// 7. Guardar los movimientos
 				$this->Ganancia->create();
 				$this->Ganancia->save($movimientoOrigen);
 
 				$this->Ganancia->create();
 				$this->Ganancia->save($movimientoDestino);
 
-				// 8. Si todo fue exitoso, confirmar la transacción
 				$dataSource->commit();
 				$this->Session->setFlash('Transferencia realizada con éxito.', 'default', array('class' => 'alert alert-success'));
 
 			}
 			catch (Exception $e) {
-				// 9. Si algo falla, revertir la transacción y mostrar un error
 				$dataSource->rollback();
 				$this->Session->setFlash('Ha ocurrido un error al procesar la transferencia.', 'default', array('class' => 'alert alert-danger'));
 			}
@@ -179,13 +155,11 @@ class GananciasController extends AppController
 				$conditions['Ganancia.jugador_id'] = $selected_jugador;
 			}
 
-			// Detectar el switch de mostrar inactivos (puede venir como '0' o '1')
 			if (isset($this->request->data['Filtro']['mostrar_todos'])) {
 				$mostrar_todos = ($this->request->data['Filtro']['mostrar_todos'] == '1');
 			}
 		}
 
-		// Si no se pide mostrar todos, filtramos por estatus activo del Jugador
 		if (!$mostrar_todos) {
 			$conditions['Jugador.estatus'] = 1;
 		}
@@ -198,7 +172,7 @@ class GananciasController extends AppController
 			'order' => array('Ganancia.anio' => 'ASC', 'Ganancia.semana' => 'ASC')
 		));
 
-		$this->Ganancia->recursive = 0; // Forzar join simple con Jugador para las semanas
+		$this->Ganancia->recursive = 0;
 		$semanas = $this->Ganancia->find(
 			'all',
 			array(
@@ -228,7 +202,6 @@ class GananciasController extends AppController
 			$ganancia = $item['Ganancia']['ganancia_neta'];
 			$id = $item['Ganancia']['id'];
 
-			// Si el jugador no existe en nuestro arreglo temporal, lo creamos
 			if (!isset($jugadores_temp[$jugador_id])) {
 				$jugadores_temp[$jugador_id] = array(
 					'nombre' => $nombre,
@@ -237,7 +210,6 @@ class GananciasController extends AppController
 				);
 			}
 
-			// Agregamos la ganancia semanal al arreglo de 'semanas' del jugador
 			$jugadores_temp[$jugador_id]['semanas'][$item['Ganancia']['semana'] . "-" . $item['Ganancia']['anio']] = $ganancia;
 			$jugadores_temp[$jugador_id]['semanas'][$item['Ganancia']['semana'] . "-" . $item['Ganancia']['anio'] . "_id"] = $id;
 		}
@@ -277,7 +249,6 @@ class GananciasController extends AppController
 		);
 		$ganancias_raw = $this->Ganancia->find('all', $options);
 
-		// --- 2. Procesar la Matriz de Datos ---
 		$tabla_pivoteada = [];
 		$semanas_unicas = [];
 		$totales_comisionista = [];
@@ -285,12 +256,9 @@ class GananciasController extends AppController
 
 		foreach ($ganancias_raw as $fila) {
 			$id = $fila['Ganancia']['comisionista_id'];
-			$semana_anio = $fila[0]['semana_anio']; // El alias se guarda en el índice [0]
+			$semana_anio = $fila[0]['semana_anio'];
 			$comision = (float)$fila[0]['total_comision'];
-			array_push($semanas_periodos, $this->convertirSemana($fila['Ganancia']['anio'], $fila['Ganancia']['semana']));
 
-
-			// 1. Rellenar la matriz pivoteada
 			if (!isset($tabla_pivoteada[$id])) {
 				$tabla_pivoteada[$id] = ['comisionista_id' => $id];
 				$totales_comisionista[$id] = 0;
@@ -299,44 +267,40 @@ class GananciasController extends AppController
 			$tabla_pivoteada[$id][$semana_anio] = $comision;
 			$totales_comisionista[$id] += $comision;
 
-			// 2. Registrar las semanas únicas para los encabezados de columna
 			if (!in_array($semana_anio, $semanas_unicas)) {
 				$semanas_unicas[] = $semana_anio;
+				$semanas_periodos[$semana_anio] = $this->convertirSemana($fila['Ganancia']['anio'], $fila['Ganancia']['semana']);
 			}
 		}
 
-		// 3. Ordenar las semanas cronológicamente
-		sort($semanas_unicas);
+		natsort($semanas_unicas);
+		$semanas_unicas = array_values($semanas_unicas);
 
-		// 4. Finalizar la matriz y llenar los "huecos" (semana con comisión 0)
 		$tabla_final = [];
 		foreach ($tabla_pivoteada as $id => $datos_comisionista) {
 			$fila_final = ['comisionista_id' => $id];
 
 			foreach ($semanas_unicas as $semana_anio) {
-				// Si el comisionista no tuvo comisión esa semana, se establece en 0
 				$fila_final[$semana_anio] = isset($datos_comisionista[$semana_anio]) ? $datos_comisionista[$semana_anio] : 0;
 			}
 
-			// Agregar la columna Total al final de la fila
 			$fila_final['Total'] = $totales_comisionista[$id];
 			$tabla_final[] = $fila_final;
 		}
 
-
-		// Enviar la información a la vista
 		$this->set(compact('tabla_final', 'semanas_unicas'));
 		$this->set('semanas_periodos', $semanas_periodos);
 
 		$this->loadModel('Comisionista');
 		$this->set('comisionistas', $this->Comisionista->find('list'));
-
 	}
 
 	public function reporte_detalle($comisionita_id = null, $semana = null)
 	{
-		$semana_raw = explode('-', $semana)[1];
-		$anio_raw = explode("-", $semana)[0];
+		$parts = explode('-', $semana);
+		$anio_raw = $parts[0];
+		$semana_raw = $parts[1];
+
 		$ganancias = $this->Ganancia->find(
 			'all',
 			array(
