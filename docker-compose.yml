@@ -1,4 +1,5 @@
 version: '3.8'
+<<<<<<< Updated upstream
 services:
   app:
     build:
@@ -8,11 +9,27 @@ services:
       - "8000:8000"
     volumes:
       - .:/var/www/html
+=======
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    environment:
+      - DB_HOST=db
+      - DB_USER=miboodb
+      - DB_PASS=!M1bo0.2025#Htyf567KJH
+      - DB_NAME=admin_miboo
+>>>>>>> Stashed changes
     depends_on:
       - db
 
   db:
     image: mysql:5.7
+<<<<<<< Updated upstream
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: admin_miboo
@@ -20,6 +37,16 @@ services:
       MYSQL_PASSWORD: '!M1bo0.2025#Htyf567KJH'
     ports:
       - "3306:3306"
+=======
+    platform: linux/amd64
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=admin_miboo
+      - MYSQL_USER=miboodb
+      - MYSQL_PASSWORD=!M1bo0.2025#Htyf567KJH
+>>>>>>> Stashed changes
     volumes:
       - db_data:/var/lib/mysql
 

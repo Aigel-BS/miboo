@@ -9,14 +9,15 @@
 		'pages/tables',
 		'/vendors/datepicker/css/bootstrap-datepicker.min',
 	),
-	array('inline'=>false));
+	array('inline' => false)
+);
 ?>
 <?php
-	$formas_pago=array(
-		'Efectivo'=>'Efectivo',
-		'Transferencia'=>'Transferencia',
-		'Mixto'=>'Mixto',
-	);
+$formas_pago = array(
+	'Efectivo' => 'Efectivo',
+	'Transferencia' => 'Transferencia',
+	'Mixto' => 'Mixto',
+);
 ?>
 
 <div class="outer" style="width: 86vw;">
@@ -25,27 +26,30 @@
 			<div class="col">
 				<div class="card">
 					<div class="card-header bg-white">
-						Registrar Ganancias Semana <?= (date('W')-1)."-".date('Y')?>
+						Registrar Ganancias Semana <?= (date('W') - 1) . "-" . date('Y') ?>
 					</div>
 					<div class="card-body p-t-50">
-						<?= $this->Form->create('Ganancia',array('url'=>array('action'=>'add','controller'=>'ganancias')))?>
-						<table class="table-striped table-bordered table-hover table m-t-15" style="width:100%">
-							<thead>
-								<tr>
-									<th>Agencia</th>
-									<th>Usuario</th>
-									<th>Jugador</th>
-									<th>Balance Anterior</th>
-									<th>Monto Semana</th>
-									<th>Descuento</th>
-									<th>Total Semana</th>
-									<th>Balance</th>
-									<th>Comisión</th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php
-									$i=0;
+						<?= $this->Form->create('Ganancia', array('url' => array('action' => 'add', 'controller' => 'ganancias'))) ?>
+						<div class="table-responsive"
+							style="max-height: 70vh; height: 70vh; overflow: auto; -webkit-overflow-scrolling: touch;">
+							<table class="table-striped table-bordered table-hover table m-t-15 table-sticky-custom"
+								style="width:100%">
+								<thead>
+									<tr>
+										<th>Agencia</th>
+										<th>Usuario</th>
+										<th>Jugador</th>
+										<th>Balance Anterior</th>
+										<th>Monto Semana</th>
+										<th>Descuento</th>
+										<th>Total Semana</th>
+										<th>Balance</th>
+										<th>Comisión</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php
+									$i = 0;
 									$agencia = '';
 									foreach ($jugadores as $jugador):
 										if ($agencia != $jugador['Comisionista']['usuario']):
@@ -55,58 +59,68 @@
 
 											echo "<tr class='comisionista-row' id='comisionista_row_{$comisionista_id}'>";
 											// La sumatoria se mostrará en este <td>
-											echo "<td colspan='4' style='background-color: black; color:white; text-align: left; font-weight: bold;'>Comisionista: {$display_name}</td>";
+											echo "<td class='sticky-subheader' colspan='4' style='background-color: black; color:white; text-align: left; font-weight: bold;'>Comisionista: {$display_name}</td>";
 											// ID donde aparecerá el monto total del comisionista
-											echo "<td colspan='5' style='background-color: black; color:white; text-align: right; font-weight: bold;'>Total Monto: <span id='total_comisionista_{$comisionista_id}'>$0.00</span></td>";
+											echo "<td class='sticky-subheader' colspan='9' style='background-color: black; color:white; text-align: right; font-weight: bold;'>Total Monto: <span id='total_comisionista_{$comisionista_id}'>$0.00</span></td>";
 											echo "</tr>";
 
 											$agencia = $jugador['Comisionista']['usuario'];
 										endif;
-								?>
+										?>
+										<tr>
+											<td><?= $jugador['Comisionista']['usuario'] ?>(<?= $jugador['Jugador']['comision_comisionista'] ?>%)
+											</td>
+											<td><?= $jugador['Jugador']['usuario'] ?></td>
+											<td><?= $jugador['Jugador']['nombre'] ?></td>
+											<td data-filter="<?= $jugador['Saldo'] > 0 ? "Ganador" : "Deudor" ?>"
+												style="<?= $jugador['Saldo'] > 0 ? "color:red;font-weight:bold;" : "color:green;font-weight:bold;" ?>">
+												$<?= number_format($jugador['Saldo'], 2) ?></td>
+											<td>
+												<?= $this->Form->input('monto_' . $i, array(
+													'id' => 'monto_' . $i,
+													'type' => 'number',
+													'class' => 'form-control monto-input', // Añadimos 'monto-input'
+													'div' => 'col-md-10',
+													'placeholder' => 'Ganancia / Pérdida',
+													// Pasamos el ID del comisionista a la función JS
+													'onchange' => 'javascript:validarTotal(' . $i . ',' . $jugador['Jugador']['descuento_2'] . ',' . $jugador['Saldo'] . ',' . $jugador['Comisionista']['id'] . ')',
+													'label' => false
+												)) ?>
+												<?= $this->Form->hidden('monto_dd_' . $i, array('id' => 'monto_dd_' . $i)) ?>
+												<?= $this->Form->hidden('jugador_id_' . $i, array('value' => $jugador['Jugador']['id'])) ?>
+											</td>
+											<td><?= $jugador['Jugador']['descuento_2'] ?>%</td>
+											<td id="total_<?= $i ?>"></td>
+											<td id="saldo_<?= $i ?>"></td>
+											<td>
+												<?= $this->Form->hidden('comision_value_' . $i, array('id' => 'comision_value_' . $i, 'value' => ($jugador['Jugador']['comision_comisionista'] / 100))) ?>
+												<?= $this->Form->hidden('comisionista_id_' . $i, array('id' => 'comisionista_id_' . $i, 'value' => $jugador['Comisionista']['id'])) ?>
+												<?= $this->Form->input('comision_' . $i, array('id' => 'comision_' . $i, 'type' => 'number', 'class' => 'form-control', 'div' => 'col-md-10', 'readonly' => true, 'label' => false)) ?>
+											</td>
+										</tr>
+										<?php $i++; ?>
+									<?php endforeach; ?>
+									<?= $this->Form->hidden('semana', array('value' => date("W") - 1)) ?>
+									<?= $this->Form->hidden('anio', array('value' => date("Y"))) ?>
+									<?= $this->Form->hidden('contador', array('id' => 'contador', 'value' => $i)) ?>
+								</tbody>
+								<tfoot>
+									<tr style="font-weight: bold; background-color: #f7f7f7;">
+										<td colspan="4" style="text-align: right;">TOTALES:</td>
+										<td id="total-monto-semana">$0.00</td>
+										<td></td>
+										<td id="total-total-semana">$0.00</td>
+										<td colspan="2"></td>
+									</tr>
 									<tr>
-										<td><?= $jugador['Comisionista']['usuario']?>(<?= $jugador['Jugador']['comision_comisionista']?>%)</td>
-										<td><?= $jugador['Jugador']['usuario']?></td>
-										<td><?= $jugador['Jugador']['nombre']?></td>
-										<td data-filter="<?= $jugador['Saldo']>0 ? "Ganador": "Deudor"?>" style="<?=  $jugador['Saldo']>0 ? "color:red;font-weight:bold;": "color:green;font-weight:bold;"?>">$<?= number_format($jugador['Saldo'],2)?></td>
-										<td>
-											<?= $this->Form->input('monto_'.$i,array('id'=>'monto_'.$i,
-												'type'=>'number','class'=>'form-control monto-input', // Añadimos 'monto-input'
-												'div'=>'col-md-10','placeholder'=>'Ganancia / Pérdida',
-												// Pasamos el ID del comisionista a la función JS
-												'onchange'=>'javascript:validarTotal('.$i.','.$jugador['Jugador']['descuento_2'].','.$jugador['Saldo'].','.$jugador['Comisionista']['id'].')',
-												'label'=>false))?>
-											<?= $this->Form->hidden('monto_dd_'.$i,array('id'=>'monto_dd_'.$i))?>
-											<?= $this->Form->hidden('jugador_id_'.$i,array('value'=>$jugador['Jugador']['id']))?>
-										</td>
-										<td><?= $jugador['Jugador']['descuento_2']?>%</td>
-										<td id="total_<?= $i?>"></td>
-										<td id="saldo_<?= $i?>"></td>
-										<td>
-											<?= $this->Form->hidden('comision_value_'.$i,array('id'=>'comision_value_'.$i,'value'=>($jugador['Jugador']['comision_comisionista']/100)))?>
-											<?= $this->Form->hidden('comisionista_id_'.$i,array('id'=>'comisionista_id_'.$i,'value'=>$jugador['Comisionista']['id']))?>
-											<?= $this->Form->input('comision_'.$i,array('id'=>'comision_'.$i,'type'=>'number','class'=>'form-control','div'=>'col-md-10','readonly'=>true,'label'=>false))?>
+										<td colspan="9">
+											<?= $this->Form->submit('Registrar Ganancias', array('class' => 'btn btn-success', 'confirm' => '¿Deseas registrar estas ganancias para estos jugadores?')) ?>
 										</td>
 									</tr>
-									<?php $i++;?>
-								<?php endforeach;?>
-							<?= $this->Form->hidden('semana',array('value'=>date("W")-1))?>
-							<?= $this->Form->hidden('anio',array('value'=>date("Y")))?>
-							<?= $this->Form->hidden('contador',array('id'=>'contador','value'=>$i))?>
-							</tbody>
-							<tfoot>
-							<tr style="font-weight: bold; background-color: #f7f7f7;">
-								<td colspan="4" style="text-align: right;">TOTALES:</td>
-								<td id="total-monto-semana">$0.00</td>
-								<td></td>
-								<td id="total-total-semana">$0.00</td>
-								<td colspan="2"></td>
-							</tr>
-							<tr>
-								<td colspan="9"><?= $this->Form->submit('Registrar Ganancias',array('class'=>'btn btn-success','confirm'=>'¿Deseas registrar estas ganancias para estos jugadores?'))?></td>
-							</tr>
-							</tfoot>
-						</table>
-						<?= $this->Form->end()?>
+								</tfoot>
+							</table>
+						</div>
+						<?= $this->Form->end() ?>
 					</div>
 				</div>
 			</div>
@@ -114,7 +128,7 @@
 	</div>
 </div>
 <script>
-	function registrarPago(){
+	function registrarPago() {
 		$('#addPago').modal('show');
 	}
 
@@ -190,7 +204,7 @@
 		return resultadoAbsoluto * signo;
 	}
 
-	function updateFooterTotals(){
+	function updateFooterTotals() {
 		var totalMontoSemana = 0;
 		var totalTotalSemana = 0;
 
@@ -200,13 +214,13 @@
 		for (let i = 0; i < contador; i++) {
 			// Sumar Monto Semana (El valor bruto del input)
 			var montoElement = document.getElementById('monto_' + i);
-			if(montoElement){
+			if (montoElement) {
 				totalMontoSemana += Number(montoElement.value) || 0; // || 0 para manejar inputs vacíos
 			}
 
 			// Sumar Total Semana (El valor ya calculado, guardado en el hidden monto_dd)
 			var totalElement = document.getElementById('monto_dd_' + i);
-			if(totalElement){
+			if (totalElement) {
 				totalTotalSemana += Number(totalElement.value) || 0;
 			}
 		}
@@ -216,7 +230,7 @@
 		document.getElementById('total-total-semana').innerHTML = "$" + totalTotalSemana.toFixed(2);
 	}
 
-	function validarTotal(row,descuento, saldo_anterior, comisionista_id) { // <-- AGREGAMOS comisionista_id
+	function validarTotal(row, descuento, saldo_anterior, comisionista_id) { // <-- AGREGAMOS comisionista_id
 		// La lógica de cálculo ya existente...
 
 		var total = Number(document.getElementById('monto_' + row).value);
@@ -274,17 +288,18 @@ echo $this->Html->script(
 		'/vendors/moment/js/moment.min',
 		'/vendors/datepicker/js/bootstrap-datepicker.min'
 	),
-	array('inline'=>false));
+	array('inline' => false)
+);
 ?>
 
 <script>
 	'use strict';
-	$(document).ready(function() {
+	$(document).ready(function () {
 		$('.fecha').datepicker({
 			format: 'dd-mm-yyyy',
 			todayHighlight: true,
 			autoclose: true,
-			orientation:"bottom"
+			orientation: "bottom"
 		});
 		updateFooterTotals();
 		updateComisionistaTotals();

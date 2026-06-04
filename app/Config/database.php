@@ -78,7 +78,6 @@ class DATABASE_CONFIG {
 	);
 	*/
 
-	/* Remoto */
 	public $default = array(
 		'datasource' => 'Database/Mysql',
 		'persistent' => false,
@@ -87,7 +86,10 @@ class DATABASE_CONFIG {
 		'password' => '!M1bo0.2025#Htyf567KJH',
 		'database' => 'admin_miboo',
 		'prefix' => '',
-		//'encoding' => 'utf8',
+		'encoding' => 'utf8',
+		'settings' => array(
+			'sql_mode' => "'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'"
+		),
 	);
 
 	public $test = array(

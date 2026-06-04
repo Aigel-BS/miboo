@@ -198,7 +198,7 @@
 										</td>
 										<td style="text-align: center">
 											<?= $this->Html->link('<i class="fa fa-edit fa-lg"></i>',"javascript:editJugador(".$jugador['Jugador']['id'].")",array('escape'=>false,'data-toggle'=>'tooltip', 'data-placement'=>'top' ,'title'=>'Editar Jugador'))?>
-											<?= $this->Html->link('<i class="fa fa-money fa-lg"></i>',"javascript:registrarPago(".$jugador['Jugador']['id'].")",array('escape'=>false,'data-toggle'=>'tooltip','data-placement'=>'top' ,'title'=>'Registrar Pago / Depósito'))?>
+											<?= $this->Html->link('<i class="fa fa-money fa-lg"></i>',"javascript:registrarPago(".$jugador['Jugador']['id'].", ".$jugador['Saldo'].")",array('escape'=>false,'data-toggle'=>'tooltip','data-placement'=>'top' ,'title'=>'Registrar Pago / Depósito'))?>
 											<?= $this->Html->link('<i class="fa fa-exchange fa-lg"></i>',"javascript:registrarInterjugador(".$jugador['Jugador']['id'].")",array('escape'=>false,'data-toggle'=>'tooltip','data-placement'=>'top' ,'title'=>'Solicitar Pago a otro jugador'))?>
 										</td>
 									</tr>
@@ -276,9 +276,21 @@
 		document.getElementById('InterjugadorRemitenteId').value=jugador_id;
 	}
 
-	function registrarPago(id_jugador){
+	function registrarPago(id_jugador, saldo){
 		$('#addPago').modal('show');
 		document.getElementById('jugador_id_edit').value = id_jugador;
+		
+		var monto = Math.abs(saldo);
+		document.getElementById('MovimientoMonto').value = monto.toFixed(2);
+		
+		if (saldo < 0) {
+			document.getElementById('MovimientoTipoMovimiento').value = 1; // Ingreso
+		} else if (saldo > 0) {
+			document.getElementById('MovimientoTipoMovimiento').value = 2; // Egreso
+		} else {
+			document.getElementById('MovimientoTipoMovimiento').value = "";
+		}
+
 		var dataString = 'id='+ id_jugador;
 		$.ajax({
 			type: "POST",

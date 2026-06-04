@@ -30,7 +30,10 @@
 	},
 	"config": {
 		"vendor-dir": "vendors/",
-		"process-timeout": 0
+		"process-timeout": 0,
+		"audit": {
+			"block-insecure": false
+		}
 	},
 	"bin": [
 		"lib/Cake/Console/cake"

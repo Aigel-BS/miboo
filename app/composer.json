@@ -19,8 +19,8 @@
 	},
 	"require": {
 		"php": ">=5.3.0",
-		"ext-mcrypt": "*",
-		"cakephp/cakephp": "~2.9"
+		"cakephp/cakephp": "~2.10",
+		"cakephp/debug_kit": "~2.2"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "3.7.*"
@@ -32,6 +32,12 @@
 		"lib/Cake/Console/cake"
 	],
 	"config": {
-		"vendor-dir": "Vendor/"
+		"vendor-dir": "Vendor/",
+		"audit": {
+			"block-insecure": false
+		},
+		"allow-plugins": {
+			"composer/installers": true
+		}
 	}
 }

@@ -5,7 +5,13 @@ class InterjugadorsController extends AppController {
 
 	function index(){
 		$this->set('titulo_seccion','Lista de Pagos Interjugadores');
-		$this->set('solicitudes',$this->Interjugador->find('all'));
+		$this->set('solicitudes',$this->Interjugador->find('all', array(
+			'order' => array(
+				'Interjugador.realizado' => 'ASC',
+				'Interjugador.fecha_aplicacion' => 'DESC',
+				'Interjugador.solicitado' => 'DESC'
+			)
+		)));
 	}
 
 	function add(){
@@ -23,37 +29,52 @@ class InterjugadorsController extends AppController {
 
 	function registrar($id = null){
 		$solicitud = $this->Interjugador->find('first',array('recursive'=>2,'conditions'=>array('Interjugador.id'=>$id)));
+		
+		if ($this->request->is(array('post', 'put'))) {
+			$fecha_aplicacion = $this->request->data['Interjugador']['fecha_aplicacion'];
+			if (empty($fecha_aplicacion)) {
+				$fecha_aplicacion = date('Y-m-d');
+			}
+
+			//Registrar "pago" del remitente
+			$this->loadModel('Movimiento');
+			$movimiento = array(
+				'fecha_registro'=>date('Y-m-d H:i:s'),
+				'fecha_aplicacion'=>$fecha_aplicacion,
+				'cuenta_id'=>3,
+				'jugador_id'=>$solicitud['Interjugador']['remitente_id'],
+				'tipo_movimiento'=>1,
+				'monto'=>$solicitud['Interjugador']['cantidad'],
+				'referencia'=>'Pago Interjugador '.$solicitud['Interjugador']['id']. " de ".$solicitud['Remitente']['nombre']. " a ".$solicitud['Receptor']['nombre'],
+				'verificado'=>0,
+				'tipo_gasto'=>'Interjugador'
+			);
+			$this->Movimiento->create();
+			$this->Movimiento->save($movimiento);
+
+			//Registrar pago recibido al receptor
+			$movimiento['jugador_id'] = $solicitud['Interjugador']['receptor_id'];
+			$movimiento['tipo_movimiento'] = 2;
+			unset($movimiento['id']);
+			$this->Movimiento->create();
+			$this->Movimiento->save($movimiento);
+
+			$solicitud_update = array(
+				'id'=>$solicitud['Interjugador']['id'],
+				'realizado'=>1,
+				'fecha_aplicacion'=>$fecha_aplicacion
+			);
+			$this->Interjugador->save($solicitud_update);
+			$this->Session->setFlash('La Solicitud de pago interjugador ha sido confirmada.', 'default', array('class' => 'success_flash'));
+			return $this->redirect(array('controller'=>'interjugadors','action'=>'index'));
+		}
+
+		if ($this->request->is('ajax')) {
+			$this->layout = 'ajax';
+		}
+		
 		$this->set('solicitud',$solicitud);
-		//Registrar "pago" del remitente
-		$this->loadModel('Movimiento');
-		$movimiento = array(
-			'fecha_registro'=>date('Y-m-d H:i:s'),
-			'fecha_aplicacion'=>date('Y-m-d H:i:s'),
-			'cuenta_id'=>3,
-			'jugador_id'=>$solicitud['Interjugador']['remitente_id'],
-			'tipo_movimiento'=>1,
-			'monto'=>$solicitud['Interjugador']['cantidad'],
-			'referencia'=>'Pago Interjugador '.$solicitud['Interjugador']['id']. " de ".$solicitud['Remitente']['nombre']. " a ".$solicitud['Receptor']['nombre'],
-			'verificado'=>0,
-			'tipo_gasto'=>'Interjugador'
-		);
-		$this->Movimiento->create();
-		$this->Movimiento->save($movimiento);
-
-		//Registrar pago recibido al receptor
-		$movimiento['jugador_id'] = $solicitud['Interjugador']['receptor_id'];
-		$movimiento['tipo_movimiento'] = 2;
-		unset($movimiento['id']);
-		$this->Movimiento->create();
-		$this->Movimiento->save($movimiento);
-
-		$solicitud = array(
-			'id'=>$solicitud['Interjugador']['id'],
-			'realizado'=>1
-		);
-		$this->Interjugador->save($solicitud);
-		$this->Session->setFlash('La Solicitud de pago interjugador ha sido confirmada.', 'default', array('class' => 'success_flash'));
-		return $this->redirect(array('controller'=>'interjugadors','action'=>'index'));
+		$this->set('titulo_seccion','Confirmar Pago Interjugador');
 	}
 
 	function delete($id = null){

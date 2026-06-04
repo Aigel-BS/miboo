@@ -39,6 +39,7 @@
 									<th>Jugador Cobra</th>
 									<th>Monto</th>
 									<th>Fecha Límite</th>
+									<th>Fecha Aplicación</th>
 									<th>Estatus</th>
 									<th style="text-align: center">Acciones</th>
 								</tr>
@@ -53,9 +54,10 @@
 										<td><?= $solicitud['Receptor']['usuario']." - ".$solicitud['Receptor']['nombre']?></td>
 										<td><?= "$".number_format($solicitud['Interjugador']['cantidad'])?></td>
 										<td><?= date("d/M/Y",strtotime($solicitud['Interjugador']['fecha_limite']))?></td>
+										<td><?= $solicitud['Interjugador']['fecha_aplicacion'] ? date("d/M/Y",strtotime($solicitud['Interjugador']['fecha_aplicacion'])) : "-"?></td>
 										<td><?= $solicitud['Interjugador']['realizado'] ? "Realizado" : "Pendiente"?></td>
 										<td style="text-align: center">
-											<?= !$solicitud['Interjugador']['realizado'] ? $this->Html->link('<i class="fa fa-money fa-lg"></i>',array('controller'=>'interjugadors','action'=>'registrar',$solicitud['Interjugador']['id']),array('escape'=>false,'confirm'=>'¿Deseas marcar como efectuado esta solicitud de pago?')) : ""?>
+											<?= !$solicitud['Interjugador']['realizado'] ? $this->Html->link('<i class="fa fa-money fa-lg"></i>', 'javascript:void(0);', array('escape'=>false, 'class' => 'btn-ajax-modal', 'data-url' => $this->Html->url(array('controller'=>'interjugadors','action'=>'registrar',$solicitud['Interjugador']['id'])))) : ""?>
 											<?= !$solicitud['Interjugador']['realizado'] ? $this->Html->link('<i class="fa fa-trash fa-lg"></i>',array('controller'=>'interjugadors','action'=>'delete',$solicitud['Interjugador']['id']),array('escape'=>false,'confirm'=>'¿Deseas eliminar esta solicitud de pago?')) : ""?>
 										</td>
 									</tr>
@@ -67,6 +69,10 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<!-- Modal for AJAX -->
+<div class="modal fade" id="ajaxModal" tabindex="-1" role="dialog" aria-hidden="true">
 </div>
 
 <?php
@@ -164,6 +170,23 @@ echo $this->Html->script(
 					let newName = oldName.replace(/\[\d+\]/, '[' + index + ']');
 					$(this).attr('name', newName);
 				});
+			});
+		});
+
+		// Modal AJAX logic
+		$(document).on('click', '.btn-ajax-modal', function(e) {
+			e.preventDefault();
+			var url = $(this).data('url');
+			$.ajax({
+				url: url,
+				type: 'GET',
+				success: function(response) {
+					$('#ajaxModal').html(response);
+					$('#ajaxModal').modal('show');
+				},
+				error: function() {
+					alert('Ocurrió un error al cargar el formulario.');
+				}
 			});
 		});
 
