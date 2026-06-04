@@ -82,7 +82,7 @@ class DATABASE_CONFIG {
 	public $default = array(
 		'datasource' => 'Database/Mysql',
 		'persistent' => false,
-		'host' => 'localhost',
+		'host' => 'db',
 		'login' => 'miboodb',
 		'password' => '!M1bo0.2025#Htyf567KJH',
 		'database' => 'admin_miboo',
