@@ -138,6 +138,7 @@
 					<div class="card-header bg-white">
 						Información General
 						<div style="float: right">
+							<?php echo $this->Html->link('<i class="fa fa-balance-scale" data-pack="default" data-tags=""></i> Liquidar Agencia',array('controller' => 'comisionistas', 'action' => 'liquidacion', $comisionista['Comisionista']['id']),array('escape'=>false,'class'=>'btn btn-warning m-r-10')); ?>
 							<?php echo $this->Html->link('<i class="fa fa-edit" data-pack="default" data-tags=""></i> Editar Información','#',array('data-toggle'=>'modal','data-target'=>'#addJugador','escape'=>false,'class'=>'btn btn-success')); ?>
 						</div>
 					</div>
