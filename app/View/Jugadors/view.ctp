@@ -298,112 +298,68 @@
 		</div>
 
 		<div class="row m-t-15">
-			<div class="col-sm-6">
+			<div class="col-sm-12">
 				<div class="card">
 					<div class="card-header bg-white">
-						Ganancias y Pérdidas
+						Estado de Cuenta Consolidado
 					</div>
 					<div class="card-body">
-						<div class="">
-							<div class="pull-sm-right">
-								<div class="tools pull-sm-right"></div>
-							</div>
+						<div class="m-b-20">
+							<?= $this->Form->create(null, array('type' => 'get', 'url' => array('controller' => 'jugadors', 'action' => 'view', $jugador['Jugador']['id']), 'class' => 'form-inline')) ?>
+								<div class="form-group m-r-10">
+									<label for="fecha_inicio" class="m-r-5">Fecha Inicio:</label>
+									<?= $this->Form->input('fecha_inicio', array('type' => 'text', 'class' => 'form-control fecha', 'label' => false, 'div' => false, 'value' => isset($this->request->query['fecha_inicio']) ? $this->request->query['fecha_inicio'] : '', 'autocomplete'=>'off')) ?>
+								</div>
+								<div class="form-group m-r-10">
+									<label for="fecha_fin" class="m-r-5">Fecha Fin:</label>
+									<?= $this->Form->input('fecha_fin', array('type' => 'text', 'class' => 'form-control fecha', 'label' => false, 'div' => false, 'value' => isset($this->request->query['fecha_fin']) ? $this->request->query['fecha_fin'] : '', 'autocomplete'=>'off')) ?>
+								</div>
+								<button type="submit" class="btn btn-primary m-r-10">Filtrar</button>
+								<?= $this->Html->link('Limpiar', array('action' => 'view', $jugador['Jugador']['id']), array('class' => 'btn btn-secondary')) ?>
+							<?= $this->Form->end() ?>
 						</div>
-						<table id="sample_1" class="table-striped table-bordered table-hover table" style="width:100%">
-							<thead>
-							<tr>
-								<th>Semana / Año</th>
-								<th>Monto Real</th>
-								<th>Monto a Pagar</th>
-							</tr>
-							</thead>
-							<tbody>
-							<?php
-								$saldo = 0;
-								foreach ($jugador['Ganancias'] as $ganancia):
-									if($ganancia['ganacia']<0){
-										$estilo = 'color:red';
-									}else{
-										$estilo = 'color:green';
-									}
-
-							?>
+						
+						<div class="table-responsive">
+							<table id="sample_consolidado" class="table-striped table-bordered table-hover table" style="width:100%">
+								<thead>
 								<tr>
-									<td><?= $ganancia['semana']." / ".$ganancia['anio'] ?></td>
-									<td style="<?= $estilo ?>">$<?= number_format($ganancia['ganacia'],2)?></td>
-									<td style="<?= $estilo ?>">$<?= number_format($ganancia['ganancia_neta'],2)?></td>
+									<th>Semana / Año</th>
+									<th>Ganancia Neta</th>
+									<th>Depósitos</th>
+									<th>Retiros</th>
+									<th>Saldo Semanal</th>
+									<th>Saldo Acumulado</th>
 								</tr>
-							<?php endforeach;?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-6">
-				<div class="card">
-					<div class="card-header bg-white">
-						Aportaciones
-					</div>
-					<div class="card-body">
-						<div class="">
-							<div class="pull-sm-right">
-								<div class="tools pull-sm-right"></div>
-							</div>
+								</thead>
+								<tbody>
+								<!-- Fila del Resultado Total -->
+								<tr class="table-info" style="background-color: #d1ecf1;">
+									<td><strong>RESULTADO TOTAL</strong></td>
+									<td colspan="4"></td>
+									<td><strong style="color: <?= $saldo_total >= 0 ? 'green' : 'red' ?>; font-size: 1.2em;">
+										$<?= number_format($saldo_total, 2) ?>
+									</strong></td>
+								</tr>
+								<!-- Desglose Semanal -->
+								<?php if(!empty($desglose_semanal)): ?>
+									<?php foreach ($desglose_semanal as $key => $data): ?>
+										<tr>
+											<td><?= $data['semana'] . " / " . $data['anio'] ?></td>
+											<td style="color: <?= $data['ganancia_neta'] >= 0 ? 'green' : 'red' ?>">$<?= number_format($data['ganancia_neta'], 2) ?></td>
+											<td>$<?= number_format($data['depositos'], 2) ?></td>
+											<td>$<?= number_format($data['retiros'], 2) ?></td>
+											<td style="color: <?= $data['saldo_neto'] >= 0 ? 'green' : 'red' ?>">$<?= number_format($data['saldo_neto'], 2) ?></td>
+											<td style="color: <?= $data['saldo_acumulado'] >= 0 ? 'green' : 'red' ?>">$<?= number_format($data['saldo_acumulado'], 2) ?></td>
+										</tr>
+									<?php endforeach; ?>
+								<?php else: ?>
+									<tr>
+										<td colspan="6" class="text-center">No hay registros para mostrar.</td>
+									</tr>
+								<?php endif; ?>
+								</tbody>
+							</table>
 						</div>
-						<table id="sample_1" class="table-striped table-bordered table-hover table" style="width:100%">
-							<thead>
-							<tr>
-								<th>Fecha de Aplicación</th>
-								<th>Referencia</th>
-								<th>Depósito</th>
-								<th>Retiro</th>
-								<th>Saldo</th>
-							</tr>
-							</thead>
-							<tbody>
-							<?php
-							$saldo_inicial = abs($jugador['Jugador']['saldo_inicial']);
-							$saldo = 0;
-							?>
-							<tr>
-								<td>Inicio de Sistema</td>
-								<td>Saldo Inicial</td>
-								<?php
-									$saldo_positivo = 0;
-									$saldo_negativo = 0;
-									if($saldo_inicial < 0){
-										$saldo_negativo = $saldo_inicial;
-									}else{
-										$saldo_positivo = $saldo_inicial;
-									}
-									$saldo = $saldo_positivo - $saldo_negativo;
-								?>
-								<td>$<?= number_format($saldo_positivo,2)?></td>
-								<td>$<?= number_format($saldo_negativo,2)?></td>
-								<td>$<?= number_format($saldo,2)?></td>
-							</tr>
-							<?php
-							foreach ($jugador['Movimientos'] as $movimiento):
-								$movimiento_positivo = "";
-								$movimiento_negativo = "";
-								if($movimiento['tipo_movimiento'] == 1){ //Ingreso
-									$movimiento_positivo = $movimiento['monto'];
-									$saldo += $movimiento['monto'];
-								}else{
-									$movimiento_negativo = $movimiento['monto'];
-									$saldo -= $movimiento['monto'];
-								}
-								?>
-								<tr>
-									<td><?= date("d-M-Y",strtotime($movimiento['fecha_aplicacion'])) ?></td>
-									<td><?= $movimiento['referencia']?></td>
-									<td><?= $movimiento_positivo != "" ? "$".number_format($movimiento_positivo,2) : ""?></td>
-									<td><?= $movimiento_negativo != "" ? "$".number_format($movimiento_negativo,2) : ""?></td>
-									<td>$<?= number_format($saldo,2)?></td>
-								</tr>
-							<?php endforeach;?>
-							</tbody>
-						</table>
 					</div>
 				</div>
 			</div>

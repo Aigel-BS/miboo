@@ -153,6 +153,91 @@ class JugadorsController extends AppController {
 		$comisionistas = $this->Comisionista->find('list');
 		$this->set('comisionistas',$comisionistas);
 		$this->set('titulo_seccion',"Jugador: ".$jugador['Jugador']['nombre']);
+		
+		$saldo_acumulado = $jugador['Jugador']['saldo_inicial'];
+
+		$cond_ganancias = array('Ganancia.jugador_id' => $id);
+		$cond_movimientos = array('Movimiento.jugador_id' => $id);
+
+		$this->loadModel('Ganancia');
+		$this->loadModel('Movimiento');
+
+		$f_inicio = null;
+		$f_fin = null;
+		if (!empty($this->request->query['fecha_inicio']) && !empty($this->request->query['fecha_fin'])) {
+			$f_inicio = date('Y-m-d', strtotime($this->request->query['fecha_inicio']));
+			$f_fin = date('Y-m-d', strtotime($this->request->query['fecha_fin']));
+			
+			// Calcular saldo acumulado previo a la fecha de inicio
+			$ganancias_previas = $this->Ganancia->find('all', array(
+				'conditions' => array('Ganancia.jugador_id' => $id, 'Ganancia.fecha <' => $f_inicio),
+				'fields' => array('SUM(Ganancia.ganancia_neta) as total')
+			));
+			$mov_ingresos_previos = $this->Movimiento->find('all', array(
+				'conditions' => array('Movimiento.jugador_id' => $id, 'Movimiento.fecha_aplicacion <' => $f_inicio, 'Movimiento.tipo_movimiento' => 1),
+				'fields' => array('SUM(Movimiento.monto) as total')
+			));
+			$mov_egresos_previos = $this->Movimiento->find('all', array(
+				'conditions' => array('Movimiento.jugador_id' => $id, 'Movimiento.fecha_aplicacion <' => $f_inicio, 'Movimiento.tipo_movimiento' => 2),
+				'fields' => array('SUM(Movimiento.monto) as total')
+			));
+			
+			$saldo_acumulado += isset($ganancias_previas[0][0]['total']) ? $ganancias_previas[0][0]['total'] : 0;
+			$saldo_acumulado += isset($mov_ingresos_previos[0][0]['total']) ? $mov_ingresos_previos[0][0]['total'] : 0;
+			$saldo_acumulado -= isset($mov_egresos_previos[0][0]['total']) ? $mov_egresos_previos[0][0]['total'] : 0;
+			
+			// Aplicar filtros para el desglose actual
+			$cond_ganancias['Ganancia.fecha >='] = $f_inicio;
+			$cond_ganancias['Ganancia.fecha <='] = $f_fin;
+			$cond_movimientos['Movimiento.fecha_aplicacion >='] = $f_inicio;
+			$cond_movimientos['Movimiento.fecha_aplicacion <='] = $f_fin;
+		}
+
+		$ganancias = $this->Ganancia->find('all', array('conditions' => $cond_ganancias));
+		$movimientos = $this->Movimiento->find('all', array('conditions' => $cond_movimientos));
+
+		$desglose_semanal = array();
+
+		// Agrupar ganancias
+		foreach ($ganancias as $g) {
+			$g = $g['Ganancia'];
+			$key = $g['anio'] . '-' . str_pad($g['semana'], 2, '0', STR_PAD_LEFT);
+			if (!isset($desglose_semanal[$key])) {
+				$desglose_semanal[$key] = array('semana' => $g['semana'], 'anio' => $g['anio'], 'ganancia_neta' => 0, 'depositos' => 0, 'retiros' => 0, 'saldo_neto' => 0);
+			}
+			$desglose_semanal[$key]['ganancia_neta'] += $g['ganancia_neta'];
+		}
+
+		// Agrupar movimientos
+		foreach ($movimientos as $m) {
+			$m = $m['Movimiento'];
+			$timestamp = strtotime($m['fecha_aplicacion']);
+			$semana = date('W', $timestamp);
+			$anio = date('o', $timestamp); // ISO-8601 year
+			$key = $anio . '-' . $semana;
+			if (!isset($desglose_semanal[$key])) {
+				$desglose_semanal[$key] = array('semana' => $semana, 'anio' => $anio, 'ganancia_neta' => 0, 'depositos' => 0, 'retiros' => 0, 'saldo_neto' => 0);
+			}
+			if ($m['tipo_movimiento'] == 1) {
+				$desglose_semanal[$key]['depositos'] += $m['monto'];
+			} elseif ($m['tipo_movimiento'] == 2) {
+				$desglose_semanal[$key]['retiros'] += $m['monto'];
+			}
+		}
+
+		ksort($desglose_semanal);
+
+		$saldo_total = $saldo_acumulado;
+		foreach ($desglose_semanal as $key => &$data) {
+			$data['saldo_neto'] = $data['ganancia_neta'] + $data['depositos'] - $data['retiros'];
+			$saldo_total += $data['saldo_neto'];
+			$data['saldo_acumulado'] = $saldo_total;
+		}
+
+		$this->set('desglose_semanal', $desglose_semanal);
+		$this->set('saldo_total', $saldo_total);
+		$this->set('f_inicio', $f_inicio);
+		$this->set('f_fin', $f_fin);
 	}
 
 	function getDuplicado(){

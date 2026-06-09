@@ -240,4 +240,174 @@ class ComisionistasController extends AppController {
 		echo json_encode($comisionista);
 		exit();
 	}
+
+	function liquidacion($id = null) {
+		if (!$id) {
+			return $this->redirect(array('action' => 'index'));
+		}
+
+		$comisionista = $this->Comisionista->findById($id);
+		if (!$comisionista) {
+			$this->Session->setFlash('Agencia no encontrada.', 'default', array('class' => 'danger_flash'));
+			return $this->redirect(array('action' => 'index'));
+		}
+		$this->set('comisionista', $comisionista);
+		$this->set('titulo_seccion', 'Liquidación Consolidada: ' . $comisionista['Comisionista']['nombre']);
+
+		$this->loadModel('Jugador');
+		$this->loadModel('Movimiento');
+		$this->loadModel('Ganancia');
+		$this->loadModel('Cuenta');
+
+		if ($this->request->is('post') || $this->request->is('put')) {
+			$jugadores_ids = isset($this->request->data['jugadores']) ? $this->request->data['jugadores'] : array();
+			$reflejar_banco = !empty($this->request->data['Liquidacion']['reflejar_banco']) ? 1 : 0;
+			$cuenta_id = !empty($this->request->data['Liquidacion']['cuenta_id']) ? $this->request->data['Liquidacion']['cuenta_id'] : null;
+			$total_jugadores = 0;
+
+			// Para cada jugador seleccionado, generar un movimiento compensatorio
+			foreach($jugadores_ids as $jugador_id) {
+				$saldo_inicial_jug = $this->Jugador->field('saldo_inicial', array('Jugador.id' => $jugador_id));
+				$movs_jug = $this->Movimiento->query("
+					SELECT SUM(
+						CASE WHEN tipo_movimiento = 1 THEN monto
+						WHEN tipo_movimiento = 2 THEN -monto ELSE 0 END
+					) as total 
+					FROM movimientos WHERE jugador_id = ".$jugador_id
+				);
+				$gans_jug = $this->Ganancia->query("
+					SELECT SUM(ganancia_neta) as total FROM ganancias WHERE jugador_id = ".$jugador_id
+				);
+				
+				$saldo_movs = isset($movs_jug[0][0]['total']) ? $movs_jug[0][0]['total'] : 0;
+				$saldo_gans = isset($gans_jug[0][0]['total']) ? $gans_jug[0][0]['total'] : 0;
+				$saldo_actual = $saldo_inicial_jug + $saldo_movs + $saldo_gans;
+				$total_jugadores += $saldo_actual;
+				
+				if (round($saldo_actual, 2) != 0) {
+					$tipo_mov = ($saldo_actual < 0) ? 1 : 2; 
+					$mov_compensatorio = array(
+						'jugador_id' => $jugador_id,
+						'comisionista_id' => $id,
+						'monto' => abs($saldo_actual),
+						'tipo_movimiento' => $tipo_mov,
+						'fecha_aplicacion' => date('Y-m-d'),
+						'referencia' => 'Liquidación Consolidada Agencia',
+						'tipo_gasto' => 'Liquidación',
+						'cuenta_id' => null
+					);
+					$this->Movimiento->create();
+					$this->Movimiento->save($mov_compensatorio);
+				}
+			}
+
+			// Compensar comisión de la agencia
+			$comisiones_query = $this->Ganancia->query("SELECT SUM(comision) as total FROM ganancias WHERE comisionista_id = " . $id);
+			$total_comision_bruta = isset($comisiones_query[0][0]['total']) ? $comisiones_query[0][0]['total'] : 0;
+			
+			$pagos_query = $this->Movimiento->query("
+				SELECT SUM(
+					CASE WHEN tipo_movimiento = 2 THEN monto
+					WHEN tipo_movimiento = 1 THEN -monto ELSE 0 END
+				) as total 
+				FROM movimientos 
+				WHERE comisionista_id = " . $id . " AND jugador_id IS NULL AND tipo_gasto = 'Comisión'
+			");
+			$pagos_comision = isset($pagos_query[0][0]['total']) ? $pagos_query[0][0]['total'] : 0;
+			
+			$comision_actual = $total_comision_bruta - $pagos_comision;
+			
+			if (round($comision_actual, 2) != 0) {
+				$tipo_mov = ($comision_actual > 0) ? 2 : 1; // Si le debemos, Egreso (2). Si debe, Ingreso (1)
+				$mov_comision = array(
+					'comisionista_id' => $id,
+					'monto' => abs($comision_actual),
+					'tipo_movimiento' => $tipo_mov,
+					'fecha_aplicacion' => date('Y-m-d'),
+					'referencia' => 'Cierre Liquidación Consolidada',
+					'tipo_gasto' => 'Comisión',
+					'cuenta_id' => null
+				);
+				$this->Movimiento->create();
+				$this->Movimiento->save($mov_comision);
+			}
+
+			if ($reflejar_banco && $cuenta_id) {
+				$posicion_book_jugadores = -$total_jugadores;
+				$posicion_book_comision = -$comision_actual; 
+				$balance_neto = $posicion_book_jugadores + $posicion_book_comision;
+				
+				if (round($balance_neto, 2) != 0) {
+					$mov_banco = array(
+						'comisionista_id' => $id,
+						'monto' => abs($balance_neto),
+						'tipo_movimiento' => ($balance_neto > 0) ? 1 : 2, // 1 Ingreso, 2 Egreso
+						'fecha_aplicacion' => date('Y-m-d'),
+						'referencia' => 'Cierre de Agencia ' . $comisionista['Comisionista']['usuario'] . ' - ' . date('d/m/Y'),
+						'tipo_gasto' => 'Liquidación Agencia',
+						'cuenta_id' => $cuenta_id
+					);
+					$this->Movimiento->create();
+					$this->Movimiento->save($mov_banco);
+				}
+			}
+
+			$this->Session->setFlash('Liquidación procesada correctamente. Se han actualizado los saldos.', 'default', array('class' => 'success_flash'));
+			return $this->redirect(array('action' => 'view', $id));
+		}
+
+		$jugadores = $this->Jugador->find('all', array(
+			'conditions' => array('comisionista_id' => $id, 'estatus' => 1)
+		));
+
+		$datos_jugadores = array();
+		foreach($jugadores as $jug) {
+			$jug_id = $jug['Jugador']['id'];
+			$movs_jug = $this->Movimiento->query("
+				SELECT SUM(
+					CASE WHEN tipo_movimiento = 1 THEN monto
+					WHEN tipo_movimiento = 2 THEN -monto ELSE 0 END
+				) as total 
+				FROM movimientos WHERE jugador_id = ".$jug_id
+			);
+			$gans_jug = $this->Ganancia->query("
+				SELECT SUM(ganancia_neta) as total, SUM(comision) as total_comision FROM ganancias WHERE jugador_id = ".$jug_id
+			);
+			$saldo_movs = isset($movs_jug[0][0]['total']) ? $movs_jug[0][0]['total'] : 0;
+			$saldo_gans = isset($gans_jug[0][0]['total']) ? $gans_jug[0][0]['total'] : 0;
+			$comision_jug = isset($gans_jug[0][0]['total_comision']) ? $gans_jug[0][0]['total_comision'] : 0;
+			$saldo = $jug['Jugador']['saldo_inicial'] + $saldo_movs + $saldo_gans;
+			
+			$datos_jugadores[] = array(
+				'id' => $jug_id,
+				'usuario' => $jug['Jugador']['usuario'],
+				'nombre' => $jug['Jugador']['nombre'],
+				'saldo' => $saldo,
+				'comision' => $comision_jug
+			);
+		}
+
+		$comisiones_query = $this->Ganancia->query("SELECT SUM(comision) as total FROM ganancias WHERE comisionista_id = " . $id);
+		$total_comision_bruta = isset($comisiones_query[0][0]['total']) ? $comisiones_query[0][0]['total'] : 0;
+		
+		$pagos_query = $this->Movimiento->query("
+			SELECT SUM(
+				CASE WHEN tipo_movimiento = 2 THEN monto
+				WHEN tipo_movimiento = 1 THEN -monto ELSE 0 END
+			) as total 
+			FROM movimientos 
+			WHERE comisionista_id = " . $id . " AND jugador_id IS NULL AND tipo_gasto = 'Comisión'
+		");
+		$pagos_comision = isset($pagos_query[0][0]['total']) ? $pagos_query[0][0]['total'] : 0;
+		
+		$total_comision = $total_comision_bruta - $pagos_comision;
+
+		$cuentas = $this->Cuenta->find('list', array(
+			'conditions' => array('Cuenta.jugador_id IS NULL', 'Cuenta.comisionista_id IS NULL', 'Cuenta.estado' => 1)
+		));
+
+		$this->set('jugadores_agencia', $datos_jugadores);
+		$this->set('total_comision', $total_comision);
+		$this->set('cuentas', $cuentas);
+	}
 }

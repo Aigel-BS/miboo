@@ -168,7 +168,13 @@ $formas_pago = array(
 											<?php
 											$saldo = 0;
 											foreach ($comisionista['Movimientos'] as $movimiento){
-												$saldo -= $movimiento['monto'];
+												if ($movimiento['tipo_gasto'] == 'Comisión' && empty($movimiento['jugador_id'])) {
+													if ($movimiento['tipo_movimiento'] == 2) {
+														$saldo -= $movimiento['monto'];
+													} else if ($movimiento['tipo_movimiento'] == 1) {
+														$saldo += $movimiento['monto'];
+													}
+												}
 											}
 											foreach ($comisionista['Comisiones'] as $comision){
 												$saldo += $comision['comision'];
@@ -179,6 +185,7 @@ $formas_pago = array(
 										<td style="text-align: center">
 											<?= $this->Html->link('<i class="fa fa-edit fa-lg"></i>',"javascript:editComisionista(".$comisionista['Comisionista']['id'].")",array('escape'=>false,'data-toggle'=>'tooltip', 'data-placement'=>'top' ,'title'=>'Editar Agenca'))?>
 											<?= $this->Html->link('<i class="fa fa-money fa-lg"></i>',"javascript:registrarPago(".$comisionista['Comisionista']['id'].")",array('escape'=>false,'data-toggle'=>'tooltip','data-placement'=>'top' ,'title'=>'Registrar Pago / Depósito'))?>
+											<?= $this->Html->link('<i class="fa fa-balance-scale fa-lg"></i>', array('controller' => 'comisionistas', 'action' => 'liquidacion', $comisionista['Comisionista']['id']), array('escape' => false, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Liquidar Agencia')) ?>
 										</td>
 									</tr>
 								<?php endforeach;?>
