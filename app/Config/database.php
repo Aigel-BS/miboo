@@ -64,7 +64,8 @@
  * flags =>
  * A key/value array of driver specific connection options.
  */
-class DATABASE_CONFIG {
+class DATABASE_CONFIG
+{
 	/* Local
 	public $default = array(
 		'datasource' => 'Database/Mysql',
@@ -81,10 +82,10 @@ class DATABASE_CONFIG {
 	public $default = array(
 		'datasource' => 'Database/Mysql',
 		'persistent' => false,
-		'host' => 'db',
-		'login' => 'miboodb',
+		'host' => 'localhost',
+		'login' => 'miboodb_test',
 		'password' => '!M1bo0.2025#Htyf567KJH',
-		'database' => 'admin_miboo',
+		'database' => 'miboodb_test',
 		'prefix' => '',
 		'encoding' => 'utf8',
 		'settings' => array(

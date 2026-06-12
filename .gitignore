@@ -1025,3 +1025,4 @@ Dockerfile
 docker-compose.yml
 Dockerfile
 docker-compose.yml
+app/Config/database.php
