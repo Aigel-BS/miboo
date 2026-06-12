@@ -20,6 +20,8 @@
 	.bg-amarillo { background-color: #ffc107; color: #333 !important; }
 	.bg-negro { background-color: #000000; }
 	.bg-aqua { background-color: #00ffff; color: #333 !important; }
+	.bg-aportaciones-or { background-color: #1e3a8a; }
+	.bg-retiros-or { background-color: #7f1d1d; }
 
 	.filter-wrapper { background: #fdfdfd; padding: 20px; border: 1px solid #eee; border-radius: 10px; margin-bottom: 30px; }
 </style>
@@ -95,6 +97,21 @@
 				<span class="kpi-title">% Realización Resultado</span>
 				<span class="kpi-value"><?php echo number_format($I8, 2); ?>%</span>
 				<small>(I2 / I1)</small>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-6">
+			<div class="kpi-card bg-aportaciones-or">
+				<span class="kpi-title">Aportaciones OR</span>
+				<span class="kpi-value"><?php echo $this->Number->currency($aportacionesOR); ?></span>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="kpi-card bg-retiros-or">
+				<span class="kpi-title">Retiros OR</span>
+				<span class="kpi-value"><?php echo $this->Number->currency($retirosOR); ?></span>
 			</div>
 		</div>
 	</div>

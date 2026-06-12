@@ -264,10 +264,16 @@ class ComisionistasController extends AppController {
 			$reflejar_banco = !empty($this->request->data['Liquidacion']['reflejar_banco']) ? 1 : 0;
 			$cuenta_id = !empty($this->request->data['Liquidacion']['cuenta_id']) ? $this->request->data['Liquidacion']['cuenta_id'] : null;
 			$total_jugadores = 0;
+			$total_comision_bruta = 0;
 
 			// Para cada jugador seleccionado, generar un movimiento compensatorio
 			foreach($jugadores_ids as $jugador_id) {
-				$saldo_inicial_jug = $this->Jugador->field('saldo_inicial', array('Jugador.id' => $jugador_id));
+				$jugador_data = $this->Jugador->find('first', array(
+					'conditions' => array('Jugador.id' => $jugador_id)
+				));
+				$saldo_inicial_jug = $jugador_data['Jugador']['saldo_inicial'];
+				$pct_comision = $jugador_data['Jugador']['comision_comisionista'] ?: 0;
+
 				$movs_jug = $this->Movimiento->query("
 					SELECT SUM(
 						CASE WHEN tipo_movimiento = 1 THEN monto
@@ -283,6 +289,11 @@ class ComisionistasController extends AppController {
 				$saldo_gans = isset($gans_jug[0][0]['total']) ? $gans_jug[0][0]['total'] : 0;
 				$saldo_actual = $saldo_inicial_jug + $saldo_movs + $saldo_gans;
 				$total_jugadores += $saldo_actual;
+				
+				$comision_jug = 0;
+				if ($saldo_actual < 0) {
+					$comision_jug = floor(abs($saldo_actual) * ($pct_comision / 100));
+				}
 				
 				if (round($saldo_actual, 2) != 0) {
 					$tipo_mov = ($saldo_actual < 0) ? 1 : 2; 
@@ -361,6 +372,7 @@ class ComisionistasController extends AppController {
 		));
 
 		$datos_jugadores = array();
+		$total_comision_bruta = 0;
 		foreach($jugadores as $jug) {
 			$jug_id = $jug['Jugador']['id'];
 			$movs_jug = $this->Movimiento->query("
@@ -371,12 +383,16 @@ class ComisionistasController extends AppController {
 				FROM movimientos WHERE jugador_id = ".$jug_id
 			);
 			$gans_jug = $this->Ganancia->query("
-				SELECT SUM(ganancia_neta) as total, SUM(comision) as total_comision FROM ganancias WHERE jugador_id = ".$jug_id
+				SELECT SUM(ganancia_neta) as total FROM ganancias WHERE jugador_id = ".$jug_id
 			);
 			$saldo_movs = isset($movs_jug[0][0]['total']) ? $movs_jug[0][0]['total'] : 0;
 			$saldo_gans = isset($gans_jug[0][0]['total']) ? $gans_jug[0][0]['total'] : 0;
-			$comision_jug = isset($gans_jug[0][0]['total_comision']) ? $gans_jug[0][0]['total_comision'] : 0;
 			$saldo = $jug['Jugador']['saldo_inicial'] + $saldo_movs + $saldo_gans;
+			
+			$comision_jug = 0;
+			if ($saldo < 0) {
+				$comision_jug = floor(abs($saldo) * (($jug['Jugador']['comision_comisionista'] ?: 0) / 100));
+			}
 			
 			$datos_jugadores[] = array(
 				'id' => $jug_id,

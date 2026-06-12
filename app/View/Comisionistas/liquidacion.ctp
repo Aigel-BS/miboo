@@ -12,11 +12,60 @@
 
 <style>
 @media print {
-	.no-print { display: none !important; }
+	.no-print, #left, #top, .head { display: none !important; }
+	#content {
+		margin-left: 0 !important;
+		padding-left: 0 !important;
+		padding-top: 0 !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		left: 0 !important;
+	}
+	.outer {
+		width: 100% !important;
+		padding: 0 !important;
+		margin: 0 !important;
+	}
+	.wrapper {
+		padding-top: 0 !important;
+	}
+	.print-only-logo {
+		display: flex !important;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 12px;
+		border-bottom: 1px solid #333;
+		padding-bottom: 5px;
+	}
+	.print-only-logo img {
+		max-height: 50px !important;
+	}
+	.print-only-logo h2 {
+		font-size: 16px !important;
+		margin-top: 4px !important;
+	}
 	.card { border: none !important; box-shadow: none !important; }
-	body { background: white !important; }
-	table { border-collapse: collapse !important; width: 100% !important; }
-	th, td { border: 1px solid #ddd !important; padding: 8px !important; }
+	.card-body { padding: 0 !important; }
+	.card-header { padding: 5px 0 !important; font-size: 13px !important; border-bottom: none !important; }
+	body { background: white !important; font-size: 12px !important; line-height: 1.15 !important; }
+	table { border-collapse: collapse !important; width: 100% !important; margin-top: 5px !important; }
+	th, td { border: 1px solid #ccc !important; padding: 4px 6px !important; font-size: 11px !important; }
+	.m-t-30 { margin-top: 10px !important; }
+	.totales-box {
+		padding: 10px 15px !important;
+		font-size: 11px !important;
+		border-radius: 4px !important;
+	}
+	.totales-box .row {
+		margin-top: 2px !important;
+	}
+	.totales-box hr {
+		margin: 5px 0 !important;
+	}
+}
+.print-only-logo {
+	display: none;
 }
 .totales-box {
 	background-color: #f8f9fa;
@@ -30,6 +79,11 @@
 <div class="outer" style="width: 86vw;">
 	<div class="inner bg-container">
 		
+		<div class="print-only-logo">
+			<img src="<?= $this->Html->url('/img/miboo_logo.png')?>" style="max-height: 80px; width: auto;" alt="logo">
+			<h2 style="margin-top: 10px; font-family: 'Hind', sans-serif; font-weight: bold; color: #111; letter-spacing: 1px; margin-bottom: 0;">MiBoo</h2>
+		</div>
+
 		<?= $this->Form->create('Liquidacion', array('url' => array('action' => 'liquidacion', $comisionista['Comisionista']['id']))) ?>
 
 		<div class="row">

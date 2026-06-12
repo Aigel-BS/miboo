@@ -42,7 +42,13 @@ class DashboardsController extends AppController {
 				'SUM(CASE WHEN tipo_movimiento = 1 THEN monto ELSE 0 END) as pos',
 				'SUM(CASE WHEN tipo_movimiento = 2 THEN monto ELSE 0 END) as neg'
 			),
-			'conditions' => array_merge($condMov, array('Movimiento.jugador_id !=' => null))
+			'conditions' => array_merge($condMov, array(
+				'Movimiento.jugador_id !=' => null,
+				'OR' => array(
+					'Movimiento.tipo_gasto !=' => 'OR',
+					'Movimiento.tipo_gasto IS NULL'
+				)
+			))
 		));
 		$I2 = (float)$resI2[0]['neg'] - (float)$resI2[0]['pos'];
 
@@ -54,6 +60,12 @@ class DashboardsController extends AppController {
 				'Movimiento.tipo_movimiento' => 2,
 				'OR' => array(
 					'Movimiento.tipo_gasto' => array(0, 2, 'Comisión')
+				),
+				'AND' => array(
+					'OR' => array(
+						'Movimiento.tipo_gasto !=' => 'OR',
+						'Movimiento.tipo_gasto IS NULL'
+					)
 				)
 			))
 		));
@@ -77,8 +89,30 @@ class DashboardsController extends AppController {
 		$I8 = ($I1 != 0) ? ($I2 / $I1) * 100 : 0;
 		$I8 = abs($I8);
 
+		// --- Aportaciones OR and Retiros OR Calculations ---
+		
+		// Aportaciones OR (Ingresos, tipo_movimiento = 1)
+		$resAportacionesOR = $this->Movimiento->find('first', array(
+			'fields' => array('SUM(Movimiento.monto) as total'),
+			'conditions' => array_merge($condMov, array(
+				'Movimiento.tipo_gasto' => 'OR',
+				'Movimiento.tipo_movimiento' => 1
+			))
+		));
+		$aportacionesOR = (float)$resAportacionesOR[0]['total'];
+
+		// Retiros OR (Egresos, tipo_movimiento = 2)
+		$resRetirosOR = $this->Movimiento->find('first', array(
+			'fields' => array('SUM(Movimiento.monto) as total'),
+			'conditions' => array_merge($condMov, array(
+				'Movimiento.tipo_gasto' => 'OR',
+				'Movimiento.tipo_movimiento' => 2
+			))
+		));
+		$retirosOR = (float)$resRetirosOR[0]['total'];
+
 		// --- 3. Pasar a la Vista ---
-		$this->set(compact('I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8'));
+		$this->set(compact('I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8', 'aportacionesOR', 'retirosOR'));
 		$this->request->data['Dashboard']['fecha_inicio'] = $fecha_inicio;
 		$this->request->data['Dashboard']['fecha_fin'] = $fecha_fin;
 	}
