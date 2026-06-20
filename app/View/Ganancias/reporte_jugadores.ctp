@@ -1,21 +1,22 @@
 <?= $this->Html->css(
 	array(
-	'/vendors/select2/css/select2.min',
-	'/vendors/datatables/css/scroller.bootstrap.min',
-	'/vendors/datatables/css/colReorder.bootstrap.min',
-	'/vendors/datatables/css/dataTables.bootstrap.min',
-	'pages/dataTables.bootstrap',
-	'plugincss/responsive.dataTables.min',
-	'pages/tables',
-	'/vendors/datepicker/css/bootstrap-datepicker.min',
+		'/vendors/select2/css/select2.min',
+		'/vendors/datatables/css/scroller.bootstrap.min',
+		'/vendors/datatables/css/colReorder.bootstrap.min',
+		'/vendors/datatables/css/dataTables.bootstrap.min',
+		'pages/dataTables.bootstrap',
+		'plugincss/responsive.dataTables.min',
+		'pages/tables',
+		'/vendors/datepicker/css/bootstrap-datepicker.min',
 
-	'/vendors/bootstrap-switch/css/bootstrap-switch.min',
-	'/vendors/switchery/css/switchery.min',
-	'/vendors/radio_css/css/radiobox.min',
-	'/vendors/checkbox_css/css/checkbox.min',
-	'pages/radio_checkbox'
-),
-	array('inline' => false));
+		'/vendors/bootstrap-switch/css/bootstrap-switch.min',
+		'/vendors/switchery/css/switchery.min',
+		'/vendors/radio_css/css/radiobox.min',
+		'/vendors/checkbox_css/css/checkbox.min',
+		'pages/radio_checkbox'
+	),
+	array('inline' => false)
+);
 ?>
 <?php
 // Asumimos que todos los jugadores tienen el mismo número de semanas.
@@ -49,6 +50,13 @@ foreach ($jugadores as $jugador) {
 
 ?>
 <style>
+	.dataTables_wrapper .table-responsive {
+		max-height: 57vh !important;
+		height: 57vh !important;
+		overflow: auto !important;
+		-webkit-overflow-scrolling: touch;
+	}
+
 	.totales-row th,
 	.totales-row td {
 		background-color: #e1d596;
@@ -66,7 +74,8 @@ foreach ($jugadores as $jugador) {
 		border-collapse: collapse;
 
 		/* Usamos un ancho mínimo para forzar el scroll horizontal */
-		/* min-width: calc(400px + <?php echo $num_semanas * 70; ?>px);
+		/* min-width: calc(400px + <?php echo $num_semanas * 70; ?>
+		px);
 	}
 
 	th,
@@ -77,80 +86,229 @@ foreach ($jugadores as $jugador) {
 	}
 
 	/* Estilos clave para la columna fija */
-		.sticky-col {
-			position: sticky;
-			left: 0;
-			z-index: 1;
-		}
+	.sticky-col {
+		position: sticky;
+		left: 0;
+		z-index: 1;
+	}
 
-		.positivo {
-			color: red;
-			font-weight: bold;
-		}
+	.positivo {
+		color: red;
+		font-weight: bold;
+	}
 
-		.negativo {
-			color: green;
-			font-weight: bold;
-		}
+	.negativo {
+		color: green;
+		font-weight: bold;
+	}
 
-		/* Fix Datepicker Visuals */
-		.datepicker {
-			padding: 10px !important;
-			border-radius: 4px !important;
-			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
-			background-color: white !important;
-			border: 1px solid #ddd !important;
-		}
+	/* Fix Datepicker Visuals */
+	.datepicker {
+		padding: 10px !important;
+		border-radius: 4px !important;
+		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+		background-color: white !important;
+		border: 1px solid #ddd !important;
+	}
 
-		.datepicker table tr td,
-		.datepicker table tr th {
-			width: 30px !important;
-			height: 30px !important;
-			border-radius: 4px !important;
-			font-size: 13px !important;
-		}
+	.datepicker table tr td,
+	.datepicker table tr th {
+		width: 30px !important;
+		height: 30px !important;
+		border-radius: 4px !important;
+		font-size: 13px !important;
+	}
 
-		.datepicker table tr td.active,
-		.datepicker table tr td.active:hover {
-			background-color: #337ab7 !important;
-			background-image: none !important;
-			color: white !important;
-		}
+	.datepicker table tr td.active,
+	.datepicker table tr td.active:hover {
+		background-color: #337ab7 !important;
+		background-image: none !important;
+		color: white !important;
+	}
 
-		.datepicker .datepicker-switch:hover,
-		.datepicker .prev:hover,
-		.datepicker .next:hover,
-		.datepicker tfoot tr th:hover {
-			background: #f5f5f5 !important;
-		}
+	.datepicker .datepicker-switch:hover,
+	.datepicker .prev:hover,
+	.datepicker .next:hover,
+	.datepicker tfoot tr th:hover {
+		background: #f5f5f5 !important;
+	}
 
-		.datepicker table tr td.day:hover {
-			background: #eeeeee !important;
-			cursor: pointer;
-		}
+	.datepicker table tr td.day:hover {
+		background: #eeeeee !important;
+		cursor: pointer;
+	}
 
-		/* Fix red header if inherited */
-		.datepicker-dropdown:after {
-			border-bottom: 6px solid #fff !important;
-		}
+	/* Fix red header if inherited */
+	.datepicker-dropdown:after {
+		border-bottom: 6px solid #fff !important;
+	}
 
-		.datepicker table thead tr:first-child th {
-			background: #f9f9f9 !important;
-			color: #333 !important;
-			border-bottom: 1px solid #eee !important;
-		}
+	.datepicker table thead tr:first-child th {
+		background: #f9f9f9 !important;
+		color: #333 !important;
+		border-bottom: 1px solid #eee !important;
+	}
 
-		.input-group-addon {
-			background-color: #f5f5f5 !important;
-			border: 1px solid #ccc !important;
-			color: #555 !important;
-		}
+	.input-group-addon {
+		background-color: #f5f5f5 !important;
+		border: 1px solid #ccc !important;
+		color: #555 !important;
+	}
 
-		.form-group label {
-			margin-bottom: 5px;
-			font-weight: 600;
-		}
+	.form-group label {
+		margin-bottom: 5px;
+		font-weight: 600;
+	}
+
+	/* EXACT same logic as Jugadors/index.ctp, with 80vh since there is only one card now */
+	body,
+	html {
+		overflow-y: hidden !important;
+	}
+
+	.outer {
+		height: calc(100vh - 60px);
+		display: flex;
+		flex-direction: column;
+	}
+
+	.inner.bg-container {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	.inner>.row {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	/* Ensure the column itself is a flex container */
+	.inner>.row>.col-lg-12 {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	/* Force the Card to 70vh */
+	.inner>.row>.col-lg-12>.card {
+		height: 70vh !important;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+		margin-bottom: 0 !important;
+	}
+
+	.inner>.row>.col-lg-12>.card>.card-body {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	#sample_1_wrapper {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	#sample_1_wrapper>.row {
+		flex-shrink: 0;
+	}
+
+	#sample_1_wrapper .table-responsive {
+		flex: 1;
+		min-height: 0;
+		overflow-y: scroll !important;
+		height: auto !important;
+		max-height: none !important;
+	}
+
+	/* Custom Top Scrollbar */
+	.top-scrollbar-wrapper {
+		flex-shrink: 0;
+		overflow-x: auto;
+		overflow-y: hidden;
+	}
+
+	.top-scrollbar-inner {
+		height: 1px;
+	}
 </style>
+
+<div class="modal fade" id="modalFiltros" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog" style="max-width:800px !important">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" style="color:black">
+					<i class="fa fa-filter"></i>
+					Filtros de Búsqueda
+				</h4>
+			</div>
+			<div class="modal-body">
+				<?= $this->Form->create('Filtro', array('id' => 'form_filtros', 'url' => array('action' => 'reporte_jugadores', 'controller' => 'ganancias'))) ?>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="fecha_inicio" class="control-label">Fecha Inicio:</label>
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+								<input type="text" name="fecha_inicio" id="fecha_inicio" class="form-control fecha"
+									value="<?= $fecha_inicio ?>" placeholder="YYYY-MM-DD" readonly
+									style="background-color: white; cursor: pointer;">
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="fecha_fin" class="control-label">Fecha Fin:</label>
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+								<input type="text" name="fecha_fin" id="fecha_fin" class="form-control fecha"
+									value="<?= $fecha_fin ?>" placeholder="YYYY-MM-DD" readonly
+									style="background-color: white; cursor: pointer;">
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="jugador_id" class="control-label">Jugador:</label>
+							<?= $this->Form->input('jugador_id', array(
+								'options' => $players_list,
+								'empty' => 'Todos los Jugadores',
+								'label' => false,
+								'class' => 'form-control select2',
+								'div' => false,
+								'default' => $selected_jugador
+							)) ?>
+						</div>
+					</div>
+					<input type="hidden" name="data[Filtro][mostrar_todos]" id="mostrar_todos_hidden"
+						value="<?= $mostrar_todos ? '1' : '0' ?>">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-primary">
+					<i class="fa fa-search"></i> Filtrar
+				</button>
+				<a href="<?= $this->Html->url(array('action' => 'reporte_jugadores')) ?>"
+					class="btn btn-secondary m-l-5">
+					<i class="fa fa-refresh"></i> Limpiar
+				</a>
+				<button type="button" class="btn btn-danger float-xs-right m-l-5" data-dismiss="modal">
+					Cerrar <i class="fa fa-times"></i>
+				</button>
+			</div>
+			<?= $this->Form->end() ?>
+		</div>
+	</div>
+</div>
 
 <div class="modal fade" id="editRegistro" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog" style="max-width:900px !important">
@@ -162,7 +320,7 @@ foreach ($jugadores as $jugador) {
 					Editar Registro
 				</h4>
 			</div>
-			<?= $this->Form->create('Ganancia', array('url' => array('action' => 'edit', 'controller' => 'ganancias'), 'class' => 'form-horizontal'))?>
+			<?= $this->Form->create('Ganancia', array('url' => array('action' => 'edit', 'controller' => 'ganancias'), 'class' => 'form-horizontal')) ?>
 			<div class="modal-body">
 				<div class="form-group row">
 					<div class="col-6">
@@ -173,12 +331,12 @@ foreach ($jugadores as $jugador) {
 					</div>
 				</div>
 				<div class="row">
-					<?= $this->Form->hidden('id')?>
+					<?= $this->Form->hidden('id') ?>
 					<?= $this->Form->input('ganancia', array('type' => 'number', 'onchange' => 'javascript:validarTotal()', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Monto Semana', 'step' => .01)); ?>
-					<?= $this->Form->input('ganancia_neta', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Monto Después de Descuento', 'step' => .01))?>
-					<?= $this->Form->input('comision', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Comisión Agencia', 'step' => .01))?>
-					<?= $this->Form->input('descuento_jugador', array('type' => 'hidden'))?>
-					<?= $this->Form->input('comision_jugador', array('type' => 'hidden'))?>
+					<?= $this->Form->input('ganancia_neta', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Monto Después de Descuento', 'step' => .01)) ?>
+					<?= $this->Form->input('comision', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Comisión Agencia', 'step' => .01)) ?>
+					<?= $this->Form->input('descuento_jugador', array('type' => 'hidden')) ?>
+					<?= $this->Form->input('comision_jugador', array('type' => 'hidden')) ?>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -186,9 +344,9 @@ foreach ($jugadores as $jugador) {
 					Cerrar
 					<i class="fa fa-times"></i>
 				</button>
-				<?= $this->Form->submit('Guardar Cambios', array('class' => 'btn btn-success pull-left'))?>
+				<?= $this->Form->submit('Guardar Cambios', array('class' => 'btn btn-success pull-left')) ?>
 			</div>
-			<?= $this->Form->end()?>
+			<?= $this->Form->end() ?>
 		</div>
 	</div>
 </div>
@@ -199,75 +357,15 @@ foreach ($jugadores as $jugador) {
 			<div class="col-lg-12">
 				<div class="card">
 					<div class="card-header bg-white">
-						Filtros
-					</div>
-					<div class="card-body">
-						<?= $this->Form->create('Filtro', array('id' => 'form_filtros', 'url' => array('action' => 'reporte_jugadores', 'controller' => 'ganancias')))?>
 						<div class="row">
-							<div class="col-md-3">
-								<div class="form-group">
-									<label for="fecha_inicio" class="control-label">Fecha Inicio:</label>
-									<div class="input-group">
-										<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-										<input type="text" name="fecha_inicio" id="fecha_inicio"
-											class="form-control fecha" value="<?= $fecha_inicio?>"
-											placeholder="YYYY-MM-DD" readonly
-											style="background-color: white; cursor: pointer;">
-									</div>
-								</div>
-							</div>
-							<div class="col-md-3">
-								<div class="form-group">
-									<label for="fecha_fin" class="control-label">Fecha Fin:</label>
-									<div class="input-group">
-										<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-										<input type="text" name="fecha_fin" id="fecha_fin" class="form-control fecha"
-											value="<?= $fecha_fin?>" placeholder="YYYY-MM-DD" readonly
-											style="background-color: white; cursor: pointer;">
-									</div>
-								</div>
-							</div>
-							<div class="col-md-3">
-								<div class="form-group">
-									<label for="jugador_id" class="control-label">Jugador:</label>
-									<?= $this->Form->input('jugador_id', array(
-	'options' => $players_list,
-	'empty' => 'Todos los Jugadores',
-	'label' => false,
-	'class' => 'form-control select2',
-	'div' => false,
-	'default' => $selected_jugador
-))?>
-								</div>
-							</div>
-							<input type="hidden" name="data[Filtro][mostrar_todos]" id="mostrar_todos_hidden"
-								value="<?= $mostrar_todos ? '1' : '0'?>">
-							<div class="col-md-3">
-								<div class="form-group" style="padding-top: 25px;">
-									<button type="submit" class="btn btn-primary">
-										<i class="fa fa-search"></i> Filtrar
-									</button>
-									<a href="<?= $this->Html->url(array('action' => 'reporte_jugadores'))?>"
-										class="btn btn-secondary m-l-5">
-										<i class="fa fa-refresh"></i> Limpiar
-									</a>
-								</div>
-							</div>
-						</div>
-						<?= $this->Form->end()?>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="card">
-					<div class="card-header bg-white">
-						<div class="row">
-							<div class="col-md-6">
+							<div class="col-md-4">
 								Semanas Jugadas
 							</div>
-							<div class="col-md-6 text-right">
+							<div class="col-md-8 text-right">
+								<button type="button" class="btn btn-primary btn-sm m-r-10" data-toggle="modal"
+									data-target="#modalFiltros">
+									<i class="fa fa-filter"></i> Filtros
+								</button>
 								<label for="mostrar_todos_toggle" class="m-r-10" style="font-weight: 600;">Mostrar
 									Inactivos:</label>
 								<input type="checkbox" id="mostrar_todos_toggle" class="make-switch" data-on-text="SI"
@@ -282,27 +380,27 @@ foreach ($jugadores as $jugador) {
 								<tr>
 									<th class="sticky-col">Usuario</th>
 									<?php foreach ($semanas as $key => $semana): ?>
-									<th>Semana
-										<?php echo $semana . "<br>" . $semanas_periodos[$key]; ?>
-									</th>
-									<?php
-endforeach; ?>
+										<th>Semana
+											<?php echo $semana . "<br>" . $semanas_periodos[$key]; ?>
+										</th>
+										<?php
+									endforeach; ?>
 									<th><b>Balance</b></th>
 								</tr>
 								<tr class="totales-row">
 									<th class="sticky-col" style="text-align: center;color:black"><b>TOTALES:</b></th>
 									<?php foreach ($semanas as $semana): ?>
-									<?php
-	$total = $totales_semana[$semana];
-	$clase = $total >= 0 ? 'positivo' : 'negativo';
-?>
-									<th class="<?php echo $clase; ?>">
-										<b>
-											<?php echo "$" . number_format($total, 2); ?>
-										</b>
-									</th>
-									<?php
-endforeach; ?>
+										<?php
+										$total = $totales_semana[$semana];
+										$clase = $total >= 0 ? 'positivo' : 'negativo';
+										?>
+										<th class="<?php echo $clase; ?>">
+											<b>
+												<?php echo "$" . number_format($total, 2); ?>
+											</b>
+										</th>
+										<?php
+									endforeach; ?>
 									<th class="<?php echo $total_balance_general >= 0 ? 'positivo' : 'negativo'; ?>">
 										<b>
 											<?php echo "$" . number_format($total_balance_general, 2); ?>
@@ -313,33 +411,33 @@ endforeach; ?>
 
 							<tbody>
 								<?php foreach ($jugadores as $jugador): ?>
-								<?php $saldo_total = $jugador['saldo_inicial']; ?>
-								<tr>
-									<td class="sticky-col">
-										<?php echo $jugador['nombre']; ?>
-									</td>
+									<?php $saldo_total = $jugador['saldo_inicial']; ?>
+									<tr>
+										<td class="sticky-col">
+											<?php echo $jugador['nombre']; ?>
+										</td>
+										<?php
+										foreach ($semanas as $semana):
+											$monto = 0;
+											if (isset($jugador['semanas'][$semana])) {
+												$saldo_total += $jugador['semanas'][$semana];
+												$monto = $jugador['semanas'][$semana];
+											}
+											?>
+											<td class="<?php echo $monto >= 0 ? 'positivo' : 'negativo'; ?>">
+												<?php echo "$" . number_format($monto, 2) ?>
+												<div style="float:right">
+													<?= $this->Html->link('<i class="fa fa-edit"></i>', 'javascript:editRegistro(' . $jugador['semanas'][$semana . "_id"] . ')', array('escape' => false)) ?>
+												</div>
+											</td>
+											<?php
+										endforeach; ?>
+										<td class="<?php echo $saldo_total >= 0 ? 'positivo' : 'negativo'; ?>"><b>
+												<?php echo "$" . number_format($saldo_total, 2); ?>
+											</b></td>
+									</tr>
 									<?php
-	foreach ($semanas as $semana):
-		$monto = 0;
-		if (isset($jugador['semanas'][$semana])) {
-			$saldo_total += $jugador['semanas'][$semana];
-			$monto = $jugador['semanas'][$semana];
-		}
-?>
-									<td class="<?php echo $monto >= 0 ? 'positivo' : 'negativo'; ?>">
-										<?php echo "$" . number_format($monto, 2)?>
-										<div style="float:right">
-											<?= $this->Html->link('<i class="fa fa-edit"></i>', 'javascript:editRegistro(' . $jugador['semanas'][$semana . "_id"] . ')', array('escape' => false))?>
-										</div>
-									</td>
-									<?php
-	endforeach; ?>
-									<td class="<?php echo $saldo_total >= 0 ? 'positivo' : 'negativo'; ?>"><b>
-											<?php echo "$" . number_format($saldo_total, 2); ?>
-										</b></td>
-								</tr>
-								<?php
-endforeach; ?>
+								endforeach; ?>
 							</tbody>
 						</table>
 					</div>
@@ -536,29 +634,30 @@ endforeach; ?>
 <?php
 echo $this->Html->script(
 	array(
-	'/vendors/select2/js/select2',
-	'/vendors/datatables/js/jquery.dataTables.min',
-	'pluginjs/dataTables.tableTools',
-	'/vendors/datatables/js/dataTables.colReorder',
-	'/vendors/datatables/js/dataTables.bootstrap.min',
-	'/vendors/datatables/js/dataTables.buttons.min',
-	'pluginjs/jquery.dataTables.min',
-	'/vendors/datatables/js/dataTables.responsive.min',
-	'/vendors/datatables/js/dataTables.rowReorder.min',
-	'/vendors/datatables/js/buttons.colVis.min',
-	'/vendors/datatables/js/buttons.html5.min',
-	'/vendors/datatables/js/buttons.bootstrap.min',
-	'/vendors/datatables/js/buttons.print.min',
-	'/vendors/datatables/js/dataTables.scroller.min',
-	'/vendors/moment/js/moment.min',
-	'/vendors/datepicker/js/bootstrap-datepicker.min',
-	'/vendors/bootstrap/js/bootstrap.min',
+		'/vendors/select2/js/select2',
+		'/vendors/datatables/js/jquery.dataTables.min',
+		'pluginjs/dataTables.tableTools',
+		'/vendors/datatables/js/dataTables.colReorder',
+		'/vendors/datatables/js/dataTables.bootstrap.min',
+		'/vendors/datatables/js/dataTables.buttons.min',
+		'pluginjs/jquery.dataTables.min',
+		'/vendors/datatables/js/dataTables.responsive.min',
+		'/vendors/datatables/js/dataTables.rowReorder.min',
+		'/vendors/datatables/js/buttons.colVis.min',
+		'/vendors/datatables/js/buttons.html5.min',
+		'/vendors/datatables/js/buttons.bootstrap.min',
+		'/vendors/datatables/js/buttons.print.min',
+		'/vendors/datatables/js/dataTables.scroller.min',
+		'/vendors/moment/js/moment.min',
+		'/vendors/datepicker/js/bootstrap-datepicker.min',
+		'/vendors/bootstrap/js/bootstrap.min',
 
-	'/vendors/bootstrap-switch/js/bootstrap-switch.min',
-	'/vendors/switchery/js/switchery.min',
-	'pages/radio_checkbox'
-),
-	array('inline' => false));
+		'/vendors/bootstrap-switch/js/bootstrap-switch.min',
+		'/vendors/switchery/js/switchery.min',
+		'pages/radio_checkbox'
+	),
+	array('inline' => false)
+);
 ?>
 
 <script>
@@ -662,7 +761,8 @@ echo $this->Html->script(
 					[100, 300, 500, -1], // Values for the dropdown: 10, 25, 50, All
 					[100, 300, 500, "Todos"] // Display text for the dropdown
 				],
-				pageLength: 500.
+				pageLength: 500,
+
 			});
 			var tableWrapper = $('#sample_1_wrapper'); // datatable creates the table wrapper by adding with id {your_table_id}_wrapper
 			tableWrapper.find('.dataTables_length select').select2(); // initialize select2 dropdown

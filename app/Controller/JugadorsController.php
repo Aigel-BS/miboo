@@ -235,6 +235,7 @@ class JugadorsController extends AppController {
 		}
 
 		$this->set('desglose_semanal', $desglose_semanal);
+		$this->set('ganancias_list', $ganancias);
 		$this->set('saldo_total', $saldo_total);
 		$this->set('f_inicio', $f_inicio);
 		$this->set('f_fin', $f_fin);

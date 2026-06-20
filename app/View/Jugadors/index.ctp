@@ -15,17 +15,80 @@
 		'/vendors/checkbox_css/css/checkbox.min',
 		'pages/radio_checkbox'
 	),
-	array('inline'=>false));
+	array('inline' => false)
+);
 ?>
+<style>
+	/* Full Flexbox layout to strictly constrain the card to the screen height without relying on calc guessing */
+	body,
+	html {
+		overflow-y: hidden !important;
+		/* Prevent the entire page from scrolling */
+	}
+
+	.outer {
+		height: calc(100vh - 60px);
+		/* Subtract approximate top navbar height */
+		display: flex;
+		flex-direction: column;
+	}
+
+	.inner,
+	.inner>.row,
+	.inner>.row>.col {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	.inner>.row>.col>.card {
+		/*flex: 1;
+		display: flex;*/
+		height: 80vh !important;
+		flex-direction: column;
+		min-height: 0;
+		margin-bottom: 0 !important;
+		/* Prevent margin from causing overflow */
+	}
+
+	.card-body {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	#sample_1_wrapper {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	#sample_1_wrapper>.row {
+		flex-shrink: 0;
+		/* Keep datatable controls (top and pagination) from shrinking */
+	}
+
+	#sample_1_wrapper .table-responsive {
+		flex: 1;
+		min-height: 0;
+		overflow-y: scroll !important;
+		height: auto !important;
+		max-height: none !important;
+		/* Override any max-height from custom.css */
+	}
+</style>
 <?php
-	$formas_pago=array(
-		'Efectivo'=>'Efectivo',
-		'Transferencia'=>'Transferencia',
-		'Mixto'=>'Mixto',
-	);
+$formas_pago = array(
+	'Efectivo' => 'Efectivo',
+	'Transferencia' => 'Transferencia',
+	'Mixto' => 'Mixto',
+);
 ?>
 
-<div class="modal fade" id="addJugador" tabindex="-1" role="dialog" aria-hidden="true" >
+<div class="modal fade" id="addJugador" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog" style="max-width:900px !important">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -34,28 +97,32 @@
 
 				</h4>
 			</div>
-			<?= $this->Form->create('Jugador',array('url'=>array('action'=>'add'),'class'=>'form-horizontal'))?>
+			<?= $this->Form->create('Jugador', array('url' => array('action' => 'add'), 'class' => 'form-horizontal')) ?>
 			<div class="modal-body">
 				<div class="form-group row">
-					<div class="col-sm-12"><h4>Datos Jugador</h4></div>
-					<?= $this->Form->input('id')?>
-					<?= $this->Form->input('nombre',array('type'=>'text','class'=>'form-control','div'=>'col-md-6','required'=>true,'label'=>'Jugador',));?>
-					<?= $this->Form->input('usuario',array('type'=>'text','class'=>'form-control','div'=>'col-md-6','required'=>true,'label'=>'Usuario',));?>
-					<?= $this->Form->input('registro',array('type'=>'text','class'=>'form-control','div'=>'col-md-6','required'=>true,'label'=>'Registro',));?>
-					<?= $this->Form->input('password',array('type'=>'text','class'=>'form-control','div'=>'col-md-6','required'=>true,'label'=>'Contraseña',));?>
-					<?= $this->Form->input('email',array('onchange'=>'javascript:validarDuplicado(this,1)','type'=>'text','class'=>'form-control','div'=>'col-md-6','label'=>array('text'=>'Email','id'=>'emailLabel')));?>
-					<?= $this->Form->input('celular',array('onchange'=>'javascript:validarDuplicado(this,2)','type'=>'text','class'=>'form-control','div'=>'col-md-6','required'=>true,'label'=>array('text'=>'Celular','id'=>'celularLabel')));?>
-					<?= $this->Form->input('credito',array('type'=>'number','class'=>'form-control','div'=>'col-md-6','label'=>'Crédito',));?>
-					<?= $this->Form->input('maxima',array('type'=>'number','class'=>'form-control','div'=>'col-md-6','label'=>'Máxima','min'=>'0',));?>
-					<?= $this->Form->input('minima',array('type'=>'number','class'=>'form-control','div'=>'col-md-6','label'=>'Mínima','min'=>'0',));?>
-					<?= $this->Form->input('descuento_1',array('type'=>'number','class'=>'form-control','div'=>'col-md-6','label'=>'Descuento Adicional Pronto Pago','max'=>'100','min'=>'0',));?>
-					<?= $this->Form->input('descuento_2',array('type'=>'number','class'=>'form-control','div'=>'col-md-6','label'=>'Descuento Pago Regular','max'=>'100','min'=>'0',));?>
-					<?= $this->Form->input('forma_pago',array('type'=>'select','options'=>$formas_pago,'empty'=>'Seleccionar Forma de Pago','class'=>'form-control','div'=>'col-md-6','label'=>'Forma de Pago',));?>
-					<?= $this->Form->input('corridas',array('type'=>'text','class'=>'form-control','div'=>'col-md-6','label'=>'Corridas',));?>
-					<?= $this->Form->input('saldo_inicial',array('type'=>'number','class'=>'form-control','div'=>'col-md-6','label'=>'Balance Inicial',));?>
-					<div class="col-sm-12 m-t-15"><h4>Datos Agencia</h4></div>
-					<?= $this->Form->input('comisionista_id',array('type'=>'select','class'=>'form-control','div'=>'col-md-6','label'=>'Agencia','options'=>$comisionistas,));?>
-					<?= $this->Form->input('comision_comisionista',array('type'=>'number','class'=>'form-control','div'=>'col-md-6','step'=>0.1,'min'=>0,'max'=>100,'label'=>'Comisión',));?>
+					<div class="col-sm-12">
+						<h4>Datos Jugador</h4>
+					</div>
+					<?= $this->Form->input('id') ?>
+					<?= $this->Form->input('nombre', array('type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Jugador', )); ?>
+					<?= $this->Form->input('usuario', array('type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Usuario', )); ?>
+					<?= $this->Form->input('registro', array('type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Registro', )); ?>
+					<?= $this->Form->input('password', array('type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Contraseña', )); ?>
+					<?= $this->Form->input('email', array('onchange' => 'javascript:validarDuplicado(this,1)', 'type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => array('text' => 'Email', 'id' => 'emailLabel'))); ?>
+					<?= $this->Form->input('celular', array('onchange' => 'javascript:validarDuplicado(this,2)', 'type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => array('text' => 'Celular', 'id' => 'celularLabel'))); ?>
+					<?= $this->Form->input('credito', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Crédito', )); ?>
+					<?= $this->Form->input('maxima', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Máxima', 'min' => '0', )); ?>
+					<?= $this->Form->input('minima', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Mínima', 'min' => '0', )); ?>
+					<?= $this->Form->input('descuento_1', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Descuento Adicional Pronto Pago', 'max' => '100', 'min' => '0', )); ?>
+					<?= $this->Form->input('descuento_2', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Descuento Pago Regular', 'max' => '100', 'min' => '0', )); ?>
+					<?= $this->Form->input('forma_pago', array('type' => 'select', 'options' => $formas_pago, 'empty' => 'Seleccionar Forma de Pago', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Forma de Pago', )); ?>
+					<?= $this->Form->input('corridas', array('type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Corridas', )); ?>
+					<?= $this->Form->input('saldo_inicial', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Balance Inicial', )); ?>
+					<div class="col-sm-12 m-t-15">
+						<h4>Datos Agencia</h4>
+					</div>
+					<?= $this->Form->input('comisionista_id', array('type' => 'select', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Agencia', 'options' => $comisionistas, )); ?>
+					<?= $this->Form->input('comision_comisionista', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'step' => 0.1, 'min' => 0, 'max' => 100, 'label' => 'Comisión', )); ?>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -63,15 +130,15 @@
 					Cerrar
 					<i class="fa fa-times"></i>
 				</button>
-				<?= $this->Form->hidden('contador',array('value'=>1))?>
-				<?= $this->Form->submit('Agregar Jugador',array('class'=>'btn btn-success pull-left','id'=>'botonSubmitJugador'))?>
+				<?= $this->Form->hidden('contador', array('value' => 1)) ?>
+				<?= $this->Form->submit('Agregar Jugador', array('class' => 'btn btn-success pull-left', 'id' => 'botonSubmitJugador')) ?>
 			</div>
-			<?= $this->Form->end()?>
+			<?= $this->Form->end() ?>
 		</div>
 	</div>
 </div>
 
-<div class="modal fade" id="addPago" tabindex="-1" role="dialog" aria-hidden="true" >
+<div class="modal fade" id="addPago" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog" style="max-width:900px !important">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -81,17 +148,17 @@
 					Registrar Movimiento
 				</h4>
 			</div>
-			<?= $this->Form->create('Movimiento',array('url'=>array('action'=>'add','controller'=>'movimientos'),'class'=>'form-horizontal'))?>
+			<?= $this->Form->create('Movimiento', array('url' => array('action' => 'add', 'controller' => 'movimientos'), 'class' => 'form-horizontal')) ?>
 			<div class="modal-body">
 				<div class="form-group row">
 					<div class="col-12">
 						<h4>Jugador: <span id='jugador_name'></span></h4>
 					</div>
-					<?= $this->Form->input('referencia',array('type'=>'text','class'=>'form-control','div'=>'col-md-6','required'=>true,'label'=>'Referencia',));?>
-					<?= $this->Form->input('monto',array('type'=>'number','class'=>'form-control','step'=>0.01,'div'=>'col-md-6','required'=>true,'label'=>'Monto',));?>
-					<?= $this->Form->input('cuenta_id',array('type'=>'select','options'=>$cuentas,'empty'=>'Seleccionar Cuenta','required'=>true,'class'=>'form-control','div'=>'col-md-6','label'=>'Cuenta',));?>
-					<?= $this->Form->input('tipo_movimiento',array('type'=>'select','options'=>array(1=>'Ingreso',2=>'Egreso'),'empty'=>'Seleccionar Tipo Movimiento','required'=>true,'class'=>'form-control','div'=>'col-md-6','label'=>'Ingreso / Egreso',));?>
-					<?= $this->Form->input('fecha_aplicacion',array('type'=>'text','class'=>'form-control fecha','div'=>'col-md-6','label'=>'Fecha',));?>
+					<?= $this->Form->input('referencia', array('type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Referencia', )); ?>
+					<?= $this->Form->input('monto', array('type' => 'number', 'class' => 'form-control', 'step' => 0.01, 'div' => 'col-md-6', 'required' => true, 'label' => 'Monto', )); ?>
+					<?= $this->Form->input('cuenta_id', array('type' => 'select', 'options' => $cuentas, 'empty' => 'Seleccionar Cuenta', 'required' => true, 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Cuenta', )); ?>
+					<?= $this->Form->input('tipo_movimiento', array('type' => 'select', 'options' => array(1 => 'Ingreso', 2 => 'Egreso'), 'empty' => 'Seleccionar Tipo Movimiento', 'required' => true, 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Ingreso / Egreso', )); ?>
+					<?= $this->Form->input('fecha_aplicacion', array('type' => 'text', 'class' => 'form-control fecha', 'div' => 'col-md-6', 'label' => 'Fecha', 'value' => date('Y-m-d'))); ?>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -99,16 +166,16 @@
 					Cerrar
 					<i class="fa fa-times"></i>
 				</button>
-				<?= $this->Form->hidden('url_redirect',array('value'=>1))?>
-				<?= $this->Form->hidden('jugador_id',array('id'=>'jugador_id_edit'))?>
-				<?= $this->Form->submit('Registrar movimiento',array('class'=>'btn btn-success pull-left'))?>
+				<?= $this->Form->hidden('url_redirect', array('value' => 1)) ?>
+				<?= $this->Form->hidden('jugador_id', array('id' => 'jugador_id_edit')) ?>
+				<?= $this->Form->submit('Registrar movimiento', array('class' => 'btn btn-success pull-left')) ?>
 			</div>
-			<?= $this->Form->end()?>
+			<?= $this->Form->end() ?>
 		</div>
 	</div>
 </div>
 
-<div class="modal fade" id="addInterjugador" tabindex="-1" role="dialog" aria-hidden="true" >
+<div class="modal fade" id="addInterjugador" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog" style="max-width:900px !important">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -118,13 +185,13 @@
 					Solicitar pago Interjugador
 				</h4>
 			</div>
-			<?= $this->Form->create('Interjugador',array('url'=>array('action'=>'add','controller'=>'interjugadors'),'class'=>'form-horizontal'))?>
+			<?= $this->Form->create('Interjugador', array('url' => array('action' => 'add', 'controller' => 'interjugadors'), 'class' => 'form-horizontal')) ?>
 			<div class="modal-body">
 				<div class="form-group row">
-					<?= $this->Form->input('remitente_id',array('type'=>'select','readonly'=>true,'options'=>$jugadores_list,'class'=>'form-control','div'=>'col-md-6','required'=>true,'label'=>'Jugador que paga',));?>
-					<?= $this->Form->input('receptor_id',array('type'=>'select','options'=>$jugadores_list,'class'=>'form-control','div'=>'col-md-6','required'=>true,'label'=>'Jugador que recibe pago',));?>
-					<?= $this->Form->input('cantidad',array('type'=>'number','class'=>'form-control','div'=>'col-md-6','required'=>true,'label'=>'Monto',));?>
-					<?= $this->Form->input('fecha_limite',array('type'=>'text','class'=>'form-control fecha','div'=>'col-md-6','label'=>'Fecha Límite',));?>
+					<?= $this->Form->input('remitente_id', array('type' => 'select', 'readonly' => true, 'options' => $jugadores_list, 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Jugador que paga', )); ?>
+					<?= $this->Form->input('receptor_id', array('type' => 'select', 'options' => $jugadores_list, 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Jugador que recibe pago', )); ?>
+					<?= $this->Form->input('cantidad', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Monto', )); ?>
+					<?= $this->Form->input('fecha_limite', array('type' => 'text', 'class' => 'form-control fecha', 'div' => 'col-md-6', 'label' => 'Fecha Límite', )); ?>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -132,9 +199,9 @@
 					Cerrar
 					<i class="fa fa-times"></i>
 				</button>
-				<?= $this->Form->submit('Registrar Solicitud',array('class'=>'btn btn-success pull-left'))?>
+				<?= $this->Form->submit('Registrar Solicitud', array('class' => 'btn btn-success pull-left')) ?>
 			</div>
-			<?= $this->Form->end()?>
+			<?= $this->Form->end() ?>
 		</div>
 	</div>
 </div>
@@ -148,15 +215,15 @@
 						Lista de Jugadores
 						<div style="float: right">
 							<?php
-								if(isset($all)){
-									echo $this->Html->link('<i class="fa fa-users" data-pack="default" data-tags=""></i> Ver Solo Activos',array('controller'=>'jugadors','action'=>'index'),array('escape'=>false,'class'=>'btn btn-primary'));
-								}else{
-									echo $this->Html->link('<i class="fa fa-users" data-pack="default" data-tags=""></i> Ver Todos',array('controller'=>'jugadors','action'=>'index',1),array('escape'=>false,'class'=>'btn btn-primary'));
-								}
+							if (isset($all)) {
+								echo $this->Html->link('<i class="fa fa-users" data-pack="default" data-tags=""></i> Ver Solo Activos', array('controller' => 'jugadors', 'action' => 'index'), array('escape' => false, 'class' => 'btn btn-primary'));
+							} else {
+								echo $this->Html->link('<i class="fa fa-users" data-pack="default" data-tags=""></i> Ver Todos', array('controller' => 'jugadors', 'action' => 'index', 1), array('escape' => false, 'class' => 'btn btn-primary'));
+							}
 
 							?>
 
-							<?php echo $this->Html->link('<i class="fa fa-plus" data-pack="default" data-tags=""></i> Agregar Jugador','javascript:addJugador()',array('escape'=>false,'class'=>'btn btn-success')); ?>
+							<?php echo $this->Html->link('<i class="fa fa-plus" data-pack="default" data-tags=""></i> Agregar Jugador', 'javascript:addJugador()', array('escape' => false, 'class' => 'btn btn-success')); ?>
 						</div>
 					</div>
 					<div class="card-body p-t-50">
@@ -165,11 +232,12 @@
 								<div class="tools pull-sm-right"></div>
 							</div>
 						</div>
-						<table id="sample_1" class="table-striped table-bordered table-hover table m-t-15" style="width:100%">
+						<table id="sample_1" class="table-striped table-bordered table-hover table m-t-15"
+							style="width:100%">
 							<thead>
 								<tr>
-									<th>Agencia</th>
 									<th>Usuario</th>
+									<th>Agencia</th>
 									<th>Contraseña</th>
 									<th>Jugador</th>
 									<th>Balance</th>
@@ -181,28 +249,35 @@
 							</thead>
 							<tbody>
 								<?php
-									foreach ($jugadores as $jugador):
-								?>
+								foreach ($jugadores as $jugador):
+									?>
 									<tr>
-										<td><?= $this->Html->link($jugador['Comisionista']['usuario'],array('action'=>'view','controller'=>'jugadors',$jugador['Jugador']['id']))?></td>
-										<td><?= $this->Html->link($jugador['Jugador']['usuario'],array('action'=>'view','controller'=>'jugadors',$jugador['Jugador']['id']))?></td>
-										<td><?= $jugador['Jugador']['password']?></td>
-										<td><?= $jugador['Jugador']['nombre']?></td>
-										<td data-filter="<?= $jugador['Saldo']<0 ? "Ganador": "Deudor"?>" style="<?=  $jugador['Saldo']==0 ? "color:black" : ($jugador['Saldo']>0 ? "color:red;font-weight:bold;": "color:green;font-weight:bold;") ?>">$<?= number_format($jugador['Saldo'],2)?></td>
-										<td><?= $jugador['Jugador']['corridas']?></td>
-										<td><?= $jugador['Jugador']['celular']?></td>
+										<td><?= $this->Html->link($jugador['Jugador']['usuario'], array('action' => 'view', 'controller' => 'jugadors', $jugador['Jugador']['id'])) ?>
+										</td>
+										<td><?= $this->Html->link($jugador['Comisionista']['usuario'], array('action' => 'view', 'controller' => 'jugadors', $jugador['Jugador']['id'])) ?>
+										</td>
+										<td><?= $jugador['Jugador']['password'] ?></td>
+										<td><?= $jugador['Jugador']['nombre'] ?></td>
+										<td data-filter="<?= $jugador['Saldo'] < 0 ? "Ganador" : "Deudor" ?>"
+											style="<?= $jugador['Saldo'] == 0 ? "color:black" : ($jugador['Saldo'] > 0 ? "color:red;font-weight:bold;" : "color:green;font-weight:bold;") ?>">
+											$<?= number_format($jugador['Saldo'], 2) ?></td>
+										<td><?= $jugador['Jugador']['corridas'] ?></td>
+										<td><?= $jugador['Jugador']['celular'] ?></td>
 										<td>
 											<div class="form-group radio_basic_swithes_padbott">
-												<input onchange="javascript:activarJugador('<?= $jugador['Jugador']['id']?>',this)" class="make-switch-radio" type="checkbox" data-on-color="success" data-off-color="danger" <?= $jugador['Jugador']['estatus'] ? "checked" : ""?>>
+												<input
+													onchange="javascript:activarJugador('<?= $jugador['Jugador']['id'] ?>',this)"
+													class="make-switch-radio" type="checkbox" data-on-color="success"
+													data-off-color="danger" <?= $jugador['Jugador']['estatus'] ? "checked" : "" ?>>
 											</div>
 										</td>
 										<td style="text-align: center">
-											<?= $this->Html->link('<i class="fa fa-edit fa-lg"></i>',"javascript:editJugador(".$jugador['Jugador']['id'].")",array('escape'=>false,'data-toggle'=>'tooltip', 'data-placement'=>'top' ,'title'=>'Editar Jugador'))?>
-											<?= $this->Html->link('<i class="fa fa-money fa-lg"></i>',"javascript:registrarPago(".$jugador['Jugador']['id'].", ".$jugador['Saldo'].")",array('escape'=>false,'data-toggle'=>'tooltip','data-placement'=>'top' ,'title'=>'Registrar Pago / Depósito'))?>
-											<?= $this->Html->link('<i class="fa fa-exchange fa-lg"></i>',"javascript:registrarInterjugador(".$jugador['Jugador']['id'].")",array('escape'=>false,'data-toggle'=>'tooltip','data-placement'=>'top' ,'title'=>'Solicitar Pago a otro jugador'))?>
+											<?= $this->Html->link('<i class="fa fa-edit fa-lg"></i>', "javascript:editJugador(" . $jugador['Jugador']['id'] . ")", array('escape' => false, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Editar Jugador')) ?>
+											<?= $this->Html->link('<i class="fa fa-money fa-lg"></i>', "javascript:registrarPago(" . $jugador['Jugador']['id'] . ", " . $jugador['Saldo'] . ")", array('escape' => false, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Registrar Pago / Depósito')) ?>
+											<?= $this->Html->link('<i class="fa fa-exchange fa-lg"></i>', "javascript:registrarInterjugador(" . $jugador['Jugador']['id'] . ")", array('escape' => false, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Solicitar Pago a otro jugador')) ?>
 										</td>
 									</tr>
-								<?php endforeach;?>
+								<?php endforeach; ?>
 							</tbody>
 						</table>
 					</div>
@@ -213,34 +288,34 @@
 </div>
 <script>
 
-	function validarDuplicado(input,numero){
-		var dataString = 'str='+ input.value;
+	function validarDuplicado(input, numero) {
+		var dataString = 'str=' + input.value;
 		$.ajax({
 			type: "POST",
-			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "getDuplicado"), TRUE); ?>' ,
+			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "getDuplicado"), TRUE); ?>',
 			data: dataString,
 			cache: false,
-			success: function(html) {
-				if (html==1){
-					switch (numero){
+			success: function (html) {
+				if (html == 1) {
+					switch (numero) {
 						case 1: //Email
-							document.getElementById('emailLabel').style="color:red";
-							document.getElementById('emailLabel').innerHTML="Email Duplicado";
+							document.getElementById('emailLabel').style = "color:red";
+							document.getElementById('emailLabel').innerHTML = "Email Duplicado";
 							break;
 						case 2:
-							document.getElementById('celularLabel').style="color:red";
-							document.getElementById('celularLabel').innerHTML="Celular Duplicado";
+							document.getElementById('celularLabel').style = "color:red";
+							document.getElementById('celularLabel').innerHTML = "Celular Duplicado";
 							break;
 					}
-				}else{
-					switch (numero){
+				} else {
+					switch (numero) {
 						case 1: //Email
-							document.getElementById('emailLabel').style="";
-							document.getElementById('emailLabel').innerHTML="Email";
+							document.getElementById('emailLabel').style = "";
+							document.getElementById('emailLabel').innerHTML = "Email";
 							break;
 						case 2:
-							document.getElementById('celularLabel').style="";
-							document.getElementById('celularLabel').innerHTML="Celular";
+							document.getElementById('celularLabel').style = "";
+							document.getElementById('celularLabel').innerHTML = "Celular";
 							break;
 					}
 				}
@@ -248,41 +323,41 @@
 		});
 	}
 
-	function activarJugador(id,input){
+	function activarJugador(id, input) {
 		var estado = input.checked ? 1 : 0
-		var dataString = 'id='+ id + '&estado='+estado;
+		var dataString = 'id=' + id + '&estado=' + estado;
 		console.log(dataString);
 		$.ajax({
 			type: "POST",
-			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "activar"), TRUE); ?>' ,
+			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "activar"), TRUE); ?>',
 			data: dataString,
 			cache: false,
-			success: function(html) {
+			success: function (html) {
 				console.log(html);
 			}
 		});
 
 	}
 
-	function addJugador(){
+	function addJugador() {
 		$('#addJugador').modal('show');
 		document.getElementById('tituloModalAddJugador').innerHTML = "<i class='fa fa-plus'></i>Nuevo Jugador";
 		document.getElementById('JugadorId').value = '';
 		document.getElementById('botonSubmitJugador').value = "Guardar Jugador";
 	}
 
-	function registrarInterjugador(jugador_id){
+	function registrarInterjugador(jugador_id) {
 		$('#addInterjugador').modal('show');
-		document.getElementById('InterjugadorRemitenteId').value=jugador_id;
+		document.getElementById('InterjugadorRemitenteId').value = jugador_id;
 	}
 
-	function registrarPago(id_jugador, saldo){
+	function registrarPago(id_jugador, saldo) {
 		$('#addPago').modal('show');
 		document.getElementById('jugador_id_edit').value = id_jugador;
-		
+
 		var monto = Math.abs(saldo);
 		document.getElementById('MovimientoMonto').value = monto.toFixed(2);
-		
+
 		if (saldo < 0) {
 			document.getElementById('MovimientoTipoMovimiento').value = 1; // Ingreso
 		} else if (saldo > 0) {
@@ -291,33 +366,33 @@
 			document.getElementById('MovimientoTipoMovimiento').value = "";
 		}
 
-		var dataString = 'id='+ id_jugador;
+		var dataString = 'id=' + id_jugador;
 		$.ajax({
 			type: "POST",
-			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "getJugador"), TRUE); ?>' ,
+			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "getJugador"), TRUE); ?>',
 			data: dataString,
 			cache: false,
-			success: function(html) {
+			success: function (html) {
 				document.getElementById('jugador_name').innerHTML = html.Jugador.nombre;
 				document.getElementById('MovimientoReferencia').value = html.Jugador.usuario + " - " + html.Jugador.nombre;
 			}
 		});
 	}
 
-	function editJugador(id){
+	function editJugador(id) {
 		$('#addJugador').modal('show');
 
 		document.getElementById('tituloModalAddJugador').innerHTML = "<i class='fa fa-edit'></i>Editar Jugador";
 		document.getElementById('botonSubmitJugador').value = "Guardar Cambios";
 		document.getElementById('JugadorId').value = id;
-		var dataString = 'id='+ id;
+		var dataString = 'id=' + id;
 
 		$.ajax({
 			type: "POST",
-			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "getJugador"), TRUE); ?>' ,
+			url: '<?php echo Router::url(array("controller" => "jugadors", "action" => "getJugador"), TRUE); ?>',
 			data: dataString,
 			cache: false,
-			success: function(html) {
+			success: function (html) {
 				document.getElementById('JugadorNombre').value = html.Jugador.nombre;
 				document.getElementById('JugadorRegistro').value = html.Jugador.registro;
 				document.getElementById('JugadorUsuario').value = html.Jugador.usuario;
@@ -363,12 +438,13 @@ echo $this->Html->script(
 		'/vendors/switchery/js/switchery.min',
 		'pages/radio_checkbox'
 	),
-	array('inline'=>false));
+	array('inline' => false)
+);
 ?>
 
 <script>
 	'use strict';
-	$(document).ready(function() {
+	$(document).ready(function () {
 		TableAdvanced.init();
 		$(".dataTables_scrollHeadInner .table").addClass("table-responsive");
 		$("#sample_5_wrapper table").removeClass("table-responsive");
@@ -378,10 +454,10 @@ echo $this->Html->script(
 			format: 'yyyy-mm-dd',
 			todayHighlight: true,
 			autoclose: true,
-			orientation:"bottom"
+			orientation: "bottom"
 		});
 
-		$(document).on('click', '.add-row', function(e) {
+		$(document).on('click', '.add-row', function (e) {
 			e.preventDefault();
 
 			//Agregar número a contador
@@ -395,7 +471,7 @@ echo $this->Html->script(
 			let newIndex = $('#cuentas-container .cuenta-row').length;
 
 			// Actualizar los nombres de los campos en la nueva fila
-			newRow.find('input').each(function() {
+			newRow.find('input').each(function () {
 				let oldName = $(this).attr('name');
 				let newName = oldName.replace(/\[\d+\]/, '[' + newIndex + ']');
 				$(this).attr('name', newName);
@@ -415,7 +491,7 @@ echo $this->Html->script(
 		});
 
 		// Función para quitar una fila
-		$(document).on('click', '.remove-row', function(e) {
+		$(document).on('click', '.remove-row', function (e) {
 			e.preventDefault();
 
 			let contador = document.getElementById('JugadorContador').value;
@@ -428,8 +504,8 @@ echo $this->Html->script(
 			rowToRemove.remove();
 
 			// Re-indexar los campos restantes
-			$('#cuentas-container .cuenta-row').each(function(index) {
-				$(this).find('input').each(function() {
+			$('#cuentas-container .cuenta-row').each(function (index) {
+				$(this).find('input').each(function () {
 					let oldName = $(this).attr('name');
 					let newName = oldName.replace(/\[\d+\]/, '[' + index + ']');
 					$(this).attr('name', newName);
@@ -438,9 +514,9 @@ echo $this->Html->script(
 		});
 
 	});
-	var TableAdvanced = function() {
+	var TableAdvanced = function () {
 		// ===============table 1====================
-		var initTable1 = function() {
+		var initTable1 = function () {
 			var table = $('#sample_1');
 			/* Table tools samples: https://www.datatables.net/release-datatables/extras/TableTools/ */
 			/* Set tabletools buttons and button container */
@@ -449,7 +525,7 @@ echo $this->Html->script(
 				buttons: [
 					'copy', 'csv', 'print'
 				],
-				order:[[1,'asc']],
+				order: [[1, 'asc']],
 				lengthMenu: [
 					[100, 300, 500, -1], // Values for the dropdown: 10, 25, 50, All
 					[100, 300, 500, "Todos"] // Display text for the dropdown
@@ -465,7 +541,7 @@ echo $this->Html->script(
 
 		return {
 			//main function to initiate the module
-			init: function() {
+			init: function () {
 				if (!jQuery().dataTable) {
 					return;
 				}

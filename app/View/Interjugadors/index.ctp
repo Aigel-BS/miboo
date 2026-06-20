@@ -17,6 +17,66 @@
 	),
 	array('inline'=>false));
 ?>
+<style>
+	/* Full Flexbox layout to strictly constrain the card to the screen height without relying on calc guessing */
+	body,
+	html {
+		overflow-y: hidden !important;
+		/* Prevent the entire page from scrolling */
+	}
+
+	.outer {
+		height: calc(100vh - 60px);
+		/* Subtract approximate top navbar height */
+		display: flex;
+		flex-direction: column;
+	}
+
+	.inner,
+	.inner>.row,
+	.inner>.row>.col {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	.inner>.row>.col>.card {
+		height: 80vh !important;
+		flex-direction: column;
+		min-height: 0;
+		margin-bottom: 0 !important;
+		/* Prevent margin from causing overflow */
+	}
+
+	.card-body {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	#sample_1_wrapper {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	#sample_1_wrapper>.row {
+		flex-shrink: 0;
+		/* Keep datatable controls (top and pagination) from shrinking */
+	}
+
+	#sample_1_wrapper .table-responsive {
+		flex: 1;
+		min-height: 0;
+		overflow-y: scroll !important;
+		height: auto !important;
+		max-height: none !important;
+		/* Override any max-height from custom.css */
+	}
+</style>
 <div class="outer" style="width: 86vw;">
 	<div class="inner bg-container">
 		<div class="row">
@@ -54,7 +114,17 @@
 										<td><?= $solicitud['Receptor']['usuario']." - ".$solicitud['Receptor']['nombre']?></td>
 										<td><?= "$".number_format($solicitud['Interjugador']['cantidad'])?></td>
 										<td><?= date("d/M/Y",strtotime($solicitud['Interjugador']['fecha_limite']))?></td>
-										<td><?= $solicitud['Interjugador']['fecha_aplicacion'] ? date("d/M/Y",strtotime($solicitud['Interjugador']['fecha_aplicacion'])) : "-"?></td>
+										<?php
+											$fecha_aplicacion = $solicitud['Interjugador']['fecha_aplicacion'];
+											if ($fecha_aplicacion) {
+												$sort_val = strtotime($fecha_aplicacion);
+												$display = date("d/M/Y",strtotime($fecha_aplicacion));
+											} else {
+												$sort_val = 9999999999;
+												$display = "-";
+											}
+										?>
+										<td data-order="<?= $sort_val ?>"><?= $display ?></td>
 										<td><?= $solicitud['Interjugador']['realizado'] ? "Realizado" : "Pendiente"?></td>
 										<td style="text-align: center">
 											<?= !$solicitud['Interjugador']['realizado'] ? $this->Html->link('<i class="fa fa-money fa-lg"></i>', 'javascript:void(0);', array('escape'=>false, 'class' => 'btn-ajax-modal', 'data-url' => $this->Html->url(array('controller'=>'interjugadors','action'=>'registrar',$solicitud['Interjugador']['id'])))) : ""?>
@@ -199,6 +269,7 @@ echo $this->Html->script(
 			/* Set tabletools buttons and button container */
 			table.DataTable({
 				dom: "Bflr<'table-responsive't><'row'<'col-md-5 col-12'i><'col-md-7 col-12'p>>",
+				order: [[5, 'desc']],
 				buttons: [
 					'copy', 'csv', 'print'
 				],
@@ -210,6 +281,30 @@ echo $this->Html->script(
 			});
 			var tableWrapper = $('#sample_1_wrapper'); // datatable creates the table wrapper by adding with id {your_table_id}_wrapper
 			tableWrapper.find('.dataTables_length select').select2(); // initialize select2 dropdown
+
+			// Calculate widths and dynamically inject CSS for sticky Jugador Paga & Jugador Cobra
+			function setStickyColumns() {
+				var w2 = $('#sample_1 th:nth-child(2)').outerWidth();
+				
+				var style = '<style id="dynamic-sticky">' +
+				// Desactivar el sticky de la primera columna que viene heredado de custom.css
+				'#sample_1 th:first-child, #sample_1 td:first-child { position: static !important; }' +
+				
+				// Hacer sticky la columna 2 y 3 (ancladas a la izquierda una vez que la columna 1 se esconde)
+				'#sample_1 th:nth-child(2), #sample_1 td:nth-child(2) { position: -webkit-sticky !important; position: sticky !important; left: 0 !important; z-index: 4 !important; background-color: #fff !important; background-clip: padding-box !important; }' +
+				'#sample_1 th:nth-child(3), #sample_1 td:nth-child(3) { position: -webkit-sticky !important; position: sticky !important; left: '+w2+'px !important; z-index: 4 !important; background-color: #fff !important; background-clip: padding-box !important; }' +
+				
+				// Z-index y fondo rojo para los headers
+				'#sample_1 thead th:nth-child(2), #sample_1 thead th:nth-child(3) { z-index: 9 !important; background-color: #c61223 !important; color: white !important; top: 0 !important; }' +
+				'</style>';
+				
+				$('#dynamic-sticky').remove();
+				$('head').append(style);
+			}
+			
+			// Wait slightly for DataTables to finish rendering widths
+			setTimeout(setStickyColumns, 500);
+			$(window).on('resize', setStickyColumns);
 		}
 		// ===============table 1===============
 

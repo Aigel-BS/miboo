@@ -315,7 +315,7 @@ function loadjscssfile(filename, filetype) {
         cursor: "pointer",
         color: "#ddd"
     }).html(" <i class='fa fa-fw fa-cog skin-icon'></i>").addClass("no-print");
-    $body.append(demo);
+    // $body.append(demo);
     $(".no-print").on("mouseenter mouseleave", function() {
         $(".skin-icon").toggleClass("fa-spin");
         return false;

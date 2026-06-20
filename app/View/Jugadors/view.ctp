@@ -301,7 +301,7 @@
 			<div class="col-sm-12">
 				<div class="card">
 					<div class="card-header bg-white">
-						Estado de Cuenta Consolidado
+						Resultados de Ganancias
 					</div>
 					<div class="card-body">
 						<div class="m-b-20">
@@ -320,44 +320,48 @@
 						</div>
 						
 						<div class="table-responsive">
-							<table id="sample_consolidado" class="table-striped table-bordered table-hover table" style="width:100%">
+							<table id="sample_ganancias" class="table-striped table-bordered table-hover table" style="width:100%">
 								<thead>
 								<tr>
+									<th>Fecha Registro</th>
 									<th>Semana / Año</th>
-									<th>Ganancia Neta</th>
-									<th>Depósitos</th>
-									<th>Retiros</th>
-									<th>Saldo Semanal</th>
-									<th>Saldo Acumulado</th>
+									<th>Monto Semana</th>
+									<th>Monto Neta</th>
+									<th>Descuento Jugador</th>
+									<th>Ganancia Neta Final</th>
 								</tr>
 								</thead>
 								<tbody>
-								<!-- Fila del Resultado Total -->
-								<tr class="table-info" style="background-color: #d1ecf1;">
-									<td><strong>RESULTADO TOTAL</strong></td>
-									<td colspan="4"></td>
-									<td><strong style="color: <?= $saldo_total >= 0 ? 'green' : 'red' ?>; font-size: 1.2em;">
-										$<?= number_format($saldo_total, 2) ?>
-									</strong></td>
-								</tr>
-								<!-- Desglose Semanal -->
-								<?php if(!empty($desglose_semanal)): ?>
-									<?php foreach ($desglose_semanal as $key => $data): ?>
+								<?php $total_ganancias = 0; ?>
+								<?php if(!empty($ganancias_list)): ?>
+									<?php foreach ($ganancias_list as $g): ?>
+										<?php 
+											$g = $g['Ganancia']; 
+											$total_ganancias += $g['ganancia_neta'];
+										?>
 										<tr>
-											<td><?= $data['semana'] . " / " . $data['anio'] ?></td>
-											<td style="color: <?= $data['ganancia_neta'] >= 0 ? 'green' : 'red' ?>">$<?= number_format($data['ganancia_neta'], 2) ?></td>
-											<td>$<?= number_format($data['depositos'], 2) ?></td>
-											<td>$<?= number_format($data['retiros'], 2) ?></td>
-											<td style="color: <?= $data['saldo_neto'] >= 0 ? 'green' : 'red' ?>">$<?= number_format($data['saldo_neto'], 2) ?></td>
-											<td style="color: <?= $data['saldo_acumulado'] >= 0 ? 'green' : 'red' ?>">$<?= number_format($data['saldo_acumulado'], 2) ?></td>
+											<td><?= date('d/M/Y', strtotime($g['fecha'])) ?></td>
+											<td>Semana <?= $g['semana'] . " / " . $g['anio'] ?></td>
+											<td>$<?= number_format($g['ganancia'], 2) ?></td>
+											<td>$<?= number_format($g['ganancia_neta_bruta'] ?? $g['ganancia_neta'], 2) ?></td>
+											<td>$<?= number_format($g['descuento_jugador'], 2) ?></td>
+											<td style="color: <?= $g['ganancia_neta'] >= 0 ? 'green' : 'red' ?>">$<?= number_format($g['ganancia_neta'], 2) ?></td>
 										</tr>
 									<?php endforeach; ?>
 								<?php else: ?>
 									<tr>
-										<td colspan="6" class="text-center">No hay registros para mostrar.</td>
+										<td colspan="6" class="text-center">No hay ganancias registradas para este periodo.</td>
 									</tr>
 								<?php endif; ?>
 								</tbody>
+								<tfoot>
+									<tr class="table-info" style="background-color: #d1ecf1;">
+										<td colspan="5" class="text-right"><strong>TOTAL:</strong></td>
+										<td><strong style="color: <?= $total_ganancias >= 0 ? 'green' : 'red' ?>; font-size: 1.2em;">
+											$<?= number_format($total_ganancias, 2) ?>
+										</strong></td>
+									</tr>
+								</tfoot>
 							</table>
 						</div>
 					</div>
