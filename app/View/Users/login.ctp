@@ -8,13 +8,11 @@
         );
  ?>
 
-<body style="background-image: unset">
-<div class="container wow fadeInDown" data-wow-delay="0.5s" data-wow-duration="2s">
-    <div class="row">
-        <div class="col-lg-8 push-lg-2 col-md-10 push-md-1 col-sm-10 push-sm-1 login_top_bottom">
-            <div class="row">
-                <div class="col-lg-8 push-lg-2 col-md-10 push-md-1 col-sm-12">
-                    <div class="login_logo login_border_radius1">
+<body style="background-image: unset; height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; background-color: #eaeaea;">
+<div class="container wow fadeInDown" data-wow-delay="0.5s" data-wow-duration="2s" style="display: flex; justify-content: center;">
+    <div class="row" style="width: 100%; justify-content: center;">
+        <div class="col-lg-5 col-md-8 col-sm-10 login_top_bottom">
+            <div class="login_logo login_border_radius1">
                         <h3  class="text-center">
                             <img src="<?= $this->Html->url('/img/miboo_logo.png')?>" alt="josh logo" class="admire_logo">
                         </h3>
@@ -24,19 +22,17 @@
                         <?= $this->Form->create('User')?>
                             <div class="form-group">
                                 <label for="email" class="form-control-label">Correo Electrónico</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon input_email"><i class="fa fa-envelope text-primary"></i></span>
-                                            <?php echo $this->Form->input('username',array('style'=>'width:100% !important','class'=>'form-control form-control-md','placeholder'=>'Usuario','label'=>false))?>
+                                <div class="input-group" style="width: 100%; display: flex;">
+                                    <span class="input-group-addon input_email" style="display: flex; align-items: center; padding: 0.5rem 1rem;"><i class="fa fa-envelope text-primary"></i></span>
+                                            <?php echo $this->Form->input('username',array('style'=>'width:100% !important; flex: 1;','class'=>'form-control form-control-md','placeholder'=>'Usuario','label'=>false, 'div' => false))?>
                                 </div>
                             </div>
                             <!--</h3>-->
                             <div class="form-group">
                                 <label for="password" class="form-control-label">Password</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon addon_password"><i
-                                            class="fa fa-lock text-primary"></i></span>
-                                            <?php echo $this->Form->input('password',array('style'=>'width:100% !important','class'=>'form-control form-control-md','placeholder'=>'Contraseña','label'=>false))?>
-
+                                <div class="input-group" style="width: 100%; display: flex;">
+                                    <span class="input-group-addon addon_password" style="display: flex; align-items: center; padding: 0.5rem 1rem;"><i class="fa fa-lock text-primary"></i></span>
+                                            <?php echo $this->Form->input('password',array('style'=>'width:100% !important; flex: 1;','class'=>'form-control form-control-md','placeholder'=>'Contraseña','label'=>false, 'div' => false))?>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -52,8 +48,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 <!-- global js -->
 
 <?php

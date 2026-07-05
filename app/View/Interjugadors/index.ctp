@@ -127,8 +127,9 @@
 										<td data-order="<?= $sort_val ?>"><?= $display ?></td>
 										<td><?= $solicitud['Interjugador']['realizado'] ? "Realizado" : "Pendiente"?></td>
 										<td style="text-align: center">
-											<?= !$solicitud['Interjugador']['realizado'] ? $this->Html->link('<i class="fa fa-money fa-lg"></i>', 'javascript:void(0);', array('escape'=>false, 'class' => 'btn-ajax-modal', 'data-url' => $this->Html->url(array('controller'=>'interjugadors','action'=>'registrar',$solicitud['Interjugador']['id'])))) : ""?>
-											<?= !$solicitud['Interjugador']['realizado'] ? $this->Html->link('<i class="fa fa-trash fa-lg"></i>',array('controller'=>'interjugadors','action'=>'delete',$solicitud['Interjugador']['id']),array('escape'=>false,'confirm'=>'¿Deseas eliminar esta solicitud de pago?')) : ""?>
+											<?= !$solicitud['Interjugador']['realizado'] ? $this->Html->link('<i class="fa fa-money fa-lg" style="margin-right: 5px;"></i>', 'javascript:void(0);', array('escape'=>false, 'class' => 'btn-ajax-modal', 'title'=>'Registrar Pago', 'data-url' => $this->Html->url(array('controller'=>'interjugadors','action'=>'registrar',$solicitud['Interjugador']['id'])))) : ""?>
+											<?= !$solicitud['Interjugador']['realizado'] ? $this->Html->link('<i class="fa fa-edit fa-lg" style="margin-right: 5px;"></i>', 'javascript:void(0);', array('escape'=>false, 'class' => 'btn-ajax-modal', 'title'=>'Editar Movimiento', 'data-url' => $this->Html->url(array('controller'=>'interjugadors','action'=>'edit',$solicitud['Interjugador']['id'])))) : ""?>
+											<?= !$solicitud['Interjugador']['realizado'] ? $this->Html->link('<i class="fa fa-trash fa-lg"></i>',array('controller'=>'interjugadors','action'=>'delete',$solicitud['Interjugador']['id']),array('escape'=>false,'title'=>'Eliminar Movimiento', 'confirm'=>'¿Deseas eliminar esta solicitud de pago?')) : ""?>
 										</td>
 									</tr>
 								<?php endforeach;?>
@@ -287,14 +288,15 @@ echo $this->Html->script(
 				var w2 = $('#sample_1 th:nth-child(2)').outerWidth();
 				
 				var style = '<style id="dynamic-sticky">' +
-				// Desactivar el sticky de la primera columna que viene heredado de custom.css
-				'#sample_1 th:first-child, #sample_1 td:first-child { position: static !important; }' +
+				// Desactivar el sticky de la primera columna que viene heredado de custom.css solo para los TD, para que el TH pueda ser sticky en Y
+				'#sample_1 tbody td:first-child { position: static !important; }' +
+				'#sample_1 thead th:first-child { position: -webkit-sticky !important; position: sticky !important; top: 0 !important; z-index: 8 !important; background-color: #c61223 !important; color: white !important; background-clip: padding-box !important; }' +
 				
 				// Hacer sticky la columna 2 y 3 (ancladas a la izquierda una vez que la columna 1 se esconde)
 				'#sample_1 th:nth-child(2), #sample_1 td:nth-child(2) { position: -webkit-sticky !important; position: sticky !important; left: 0 !important; z-index: 4 !important; background-color: #fff !important; background-clip: padding-box !important; }' +
 				'#sample_1 th:nth-child(3), #sample_1 td:nth-child(3) { position: -webkit-sticky !important; position: sticky !important; left: '+w2+'px !important; z-index: 4 !important; background-color: #fff !important; background-clip: padding-box !important; }' +
 				
-				// Z-index y fondo rojo para los headers
+				// Z-index y fondo rojo para los headers 2 y 3
 				'#sample_1 thead th:nth-child(2), #sample_1 thead th:nth-child(3) { z-index: 9 !important; background-color: #c61223 !important; color: white !important; top: 0 !important; }' +
 				'</style>';
 				

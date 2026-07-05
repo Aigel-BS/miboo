@@ -22,6 +22,33 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	<?= $this->fetch('css')?>
 
+	<style>
+		@media (max-width: 768px) {
+			.outer {
+				width: 100% !important;
+				padding-left: 0 !important;
+				padding-right: 0 !important;
+			}
+			.inner {
+				padding-left: 0 !important;
+				padding-right: 0 !important;
+			}
+			.card-body {
+				padding-left: 0 !important;
+				padding-right: 0 !important;
+			}
+			#content {
+				padding-left: 1% !important;
+				padding-right: 1% !important;
+			}
+			.card {
+				margin-left: 0 !important;
+				margin-right: 0 !important;
+				border-left: 0 !important;
+				border-right: 0 !important;
+			}
+		}
+	</style>
 </head>
 
 <body class="body fixedNav_position fixedMenu_left">

@@ -323,12 +323,8 @@
 							<table id="sample_ganancias" class="table-striped table-bordered table-hover table" style="width:100%">
 								<thead>
 								<tr>
-									<th>Fecha Registro</th>
 									<th>Semana / Año</th>
 									<th>Monto Semana</th>
-									<th>Monto Neta</th>
-									<th>Descuento Jugador</th>
-									<th>Ganancia Neta Final</th>
 								</tr>
 								</thead>
 								<tbody>
@@ -340,23 +336,19 @@
 											$total_ganancias += $g['ganancia_neta'];
 										?>
 										<tr>
-											<td><?= date('d/M/Y', strtotime($g['fecha'])) ?></td>
 											<td>Semana <?= $g['semana'] . " / " . $g['anio'] ?></td>
-											<td>$<?= number_format($g['ganancia'], 2) ?></td>
-											<td>$<?= number_format($g['ganancia_neta_bruta'] ?? $g['ganancia_neta'], 2) ?></td>
-											<td>$<?= number_format($g['descuento_jugador'], 2) ?></td>
 											<td style="color: <?= $g['ganancia_neta'] >= 0 ? 'green' : 'red' ?>">$<?= number_format($g['ganancia_neta'], 2) ?></td>
 										</tr>
 									<?php endforeach; ?>
 								<?php else: ?>
 									<tr>
-										<td colspan="6" class="text-center">No hay ganancias registradas para este periodo.</td>
+										<td colspan="2" class="text-center">No hay ganancias registradas para este periodo.</td>
 									</tr>
 								<?php endif; ?>
 								</tbody>
 								<tfoot>
 									<tr class="table-info" style="background-color: #d1ecf1;">
-										<td colspan="5" class="text-right"><strong>TOTAL:</strong></td>
+										<td class="text-right"><strong>TOTAL:</strong></td>
 										<td><strong style="color: <?= $total_ganancias >= 0 ? 'green' : 'red' ?>; font-size: 1.2em;">
 											$<?= number_format($total_ganancias, 2) ?>
 										</strong></td>

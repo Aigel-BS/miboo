@@ -77,6 +77,26 @@ class InterjugadorsController extends AppController {
 		$this->set('titulo_seccion','Confirmar Pago Interjugador');
 	}
 
+	function edit($id = null){
+		$solicitud = $this->Interjugador->find('first',array('recursive'=>2,'conditions'=>array('Interjugador.id'=>$id)));
+		
+		if ($this->request->is(array('post', 'put'))) {
+			$this->request->data['Interjugador']['id'] = $id;
+			if ($this->Interjugador->save($this->request->data)) {
+				$this->Session->setFlash('La Solicitud de pago interjugador ha sido actualizada.', 'default', array('class' => 'success_flash'));
+			} else {
+				$this->Session->setFlash('La Solicitud de pago interjugador no pudo ser actualizada.', 'default', array('class' => 'error_flash'));
+			}
+			return $this->redirect(array('controller'=>'interjugadors','action'=>'index'));
+		}
+
+		if ($this->request->is('ajax')) {
+			$this->layout = 'ajax';
+		}
+		
+		$this->set('solicitud',$solicitud);
+	}
+
 	function delete($id = null){
 		if($this->Interjugador->delete($id)){
 			$this->Session->setFlash('La Solicitud de pago interjugador ha sido eliminada.', 'default', array('class' => 'success_flash'));

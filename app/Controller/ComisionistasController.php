@@ -241,6 +241,22 @@ class ComisionistasController extends AppController {
 		exit();
 	}
 
+	function activar(){
+		$comisionista = array(
+			'id'=>$this->request->data['id'],
+			'estado'=>$this->request->data['estado']
+		);
+		$mensaje = "";
+		if($this->Comisionista->save($comisionista)){
+			$mensaje = "Comisionista Actualizado";
+		}else{
+			$mensaje = "Comisionista No Actualizado";
+		}
+		header('Content-Type: application/json');
+		echo json_encode($mensaje);
+		exit();
+	}
+
 	function liquidacion($id = null) {
 		if (!$id) {
 			return $this->redirect(array('action' => 'index'));

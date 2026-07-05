@@ -8,6 +8,11 @@
 		'plugincss/responsive.dataTables.min',
 		'pages/tables',
 		'/vendors/datepicker/css/bootstrap-datepicker.min',
+		'/vendors/bootstrap-switch/css/bootstrap-switch.min',
+		'/vendors/switchery/css/switchery.min',
+		'/vendors/radio_css/css/radiobox.min',
+		'/vendors/checkbox_css/css/checkbox.min',
+		'pages/radio_checkbox'
 	),
 	array('inline'=>false));
 
@@ -19,6 +24,12 @@ $formas_pago = array(
 );
 
 ?>
+
+<style>
+	.hide {
+		display: none;
+	}
+</style>
 
 <div class="modal fade" id="addJugador" tabindex="-1" role="dialog" aria-hidden="true" >
 	<div class="modal-dialog" style="max-width:900px !important">
@@ -137,6 +148,7 @@ $formas_pago = array(
 					<div class="card-header bg-white">
 						Lista de Agencias
 						<div style="float: right">
+							<?= $this->Html->link('<i class="fa fa-eye"></i> Ver Todos','javascript:verTodas()',array('class'=>'btn btn-primary','escape'=>false))?>
 							<?php echo $this->Html->link('<i class="fa fa-plus" data-pack="default" data-tags=""></i> Agregar Agencia','#',array('escape'=>false,'data-target'=>'#addJugador','data-toggle'=>'modal','class'=>'btn btn-success')); ?>
 						</div>
 					</div>
@@ -153,14 +165,16 @@ $formas_pago = array(
 									<th>Jugadores</th>
 									<th>Balance Jugadores</th>
 									<th>Comisiones Pendientes</th>
+									<th>Status</th>
 									<th style="text-align: center">Acciones</th>
 								</tr>
 							</thead>
 							<tbody>
 								<?php
+									$i = 0;
 									foreach ($comisionistas as $comisionista):
 								?>
-									<tr>
+									<tr id='tr_<?= $i?>' class="<?= isset($comisionista['Comisionista']['estado']) && $comisionista['Comisionista']['estado'] == 0 ? 'hide' : '' ?>">
 										<td><?= $this->Html->link($comisionista['Comisionista']['usuario'],array('controller'=>'comisionistas','action'=>'view',$comisionista['Comisionista']['id']))?></td>
 										<td><?= sizeof($comisionista['Jugadors'])?></td>
 										<td>$<?= number_format($movimientos_finales[$comisionista['Comisionista']['id']]['saldo_movimientos'] + $movimientos_finales[$comisionista['Comisionista']['id']]['ganancia'] + $movimientos_finales[$comisionista['Comisionista']['id']]['saldo_inicial'] ,2)?></td>
@@ -182,13 +196,18 @@ $formas_pago = array(
 											echo "$".number_format($saldo,2);
 											?>
 										</td>
+										<td>
+											<div class="form-group radio_basic_swithes_padbott">
+												<input onchange="javascript:activarComisionista('<?= $comisionista['Comisionista']['id']?>',this)" class="make-switch-radio" type="checkbox" data-on-color="success" data-off-color="danger" <?= !isset($comisionista['Comisionista']['estado']) || $comisionista['Comisionista']['estado'] ? "checked" : ""?>>
+											</div>
+										</td>
 										<td style="text-align: center">
 											<?= $this->Html->link('<i class="fa fa-edit fa-lg"></i>',"javascript:editComisionista(".$comisionista['Comisionista']['id'].")",array('escape'=>false,'data-toggle'=>'tooltip', 'data-placement'=>'top' ,'title'=>'Editar Agenca'))?>
 											<?= $this->Html->link('<i class="fa fa-money fa-lg"></i>',"javascript:registrarPago(".$comisionista['Comisionista']['id'].")",array('escape'=>false,'data-toggle'=>'tooltip','data-placement'=>'top' ,'title'=>'Registrar Pago / Depósito'))?>
 											<?= $this->Html->link('<i class="fa fa-balance-scale fa-lg"></i>', array('controller' => 'comisionistas', 'action' => 'liquidacion', $comisionista['Comisionista']['id']), array('escape' => false, 'data-toggle' => 'tooltip', 'data-placement' => 'top', 'title' => 'Liquidar Agencia')) ?>
 										</td>
 									</tr>
-								<?php endforeach;?>
+								<?php $i++; endforeach;?>
 							</tbody>
 						</table>
 					</div>
@@ -218,6 +237,9 @@ echo $this->Html->script(
 		'/vendors/datatables/js/dataTables.scroller.min',
 		'/vendors/moment/js/moment.min',
 		'/vendors/datepicker/js/bootstrap-datepicker.min',
+		'/vendors/bootstrap-switch/js/bootstrap-switch.min',
+		'/vendors/switchery/js/switchery.min',
+		'pages/radio_checkbox'
 	),
 	array('inline'=>false));
 ?>
@@ -259,6 +281,28 @@ echo $this->Html->script(
 				document.getElementById('edit_esquema').value = html.Comisionista.esquema;
 			}
 		});
+	}
+
+	function activarComisionista(id, input) {
+		var estado = input.checked ? 1 : 0;
+		var dataString = 'id=' + id + '&estado=' + estado;
+		$.ajax({
+			type: "POST",
+			url: '<?php echo Router::url(array("controller" => "comisionistas", "action" => "activar"), TRUE); ?>',
+			data: dataString,
+			cache: false,
+			success: function (html) {
+				console.log(html);
+			}
+		});
+	}
+
+	function verTodas(){
+		for(var j=0; j<=<?= $i?>; j++){
+			if(document.getElementById('tr_'+j)) {
+				document.getElementById('tr_'+j).classList.remove('hide');
+			}
+		}
 	}
 
 	'use strict';
