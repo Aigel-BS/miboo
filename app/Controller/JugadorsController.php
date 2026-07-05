@@ -188,9 +188,9 @@ class JugadorsController extends AppController {
 			
 			// Aplicar filtros para el desglose actual
 			$cond_ganancias['Ganancia.fecha >='] = $f_inicio;
-			$cond_ganancias['Ganancia.fecha <='] = $f_fin;
+			$cond_ganancias['Ganancia.fecha <='] = $f_fin . ' 23:59:59';
 			$cond_movimientos['Movimiento.fecha_aplicacion >='] = $f_inicio;
-			$cond_movimientos['Movimiento.fecha_aplicacion <='] = $f_fin;
+			$cond_movimientos['Movimiento.fecha_aplicacion <='] = $f_fin . ' 23:59:59';
 		}
 
 		$ganancias = $this->Ganancia->find('all', array('conditions' => $cond_ganancias));
