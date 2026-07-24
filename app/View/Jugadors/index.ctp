@@ -525,7 +525,7 @@ echo $this->Html->script(
 				buttons: [
 					'copy', 'csv', 'print'
 				],
-				order: [[1, 'asc']],
+				order: [[0, 'asc']],
 				lengthMenu: [
 					[100, 300, 500, -1], // Values for the dropdown: 10, 25, 50, All
 					[100, 300, 500, "Todos"] // Display text for the dropdown

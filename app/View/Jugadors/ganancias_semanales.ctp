@@ -19,6 +19,37 @@ $formas_pago = array(
 	'Mixto' => 'Mixto',
 );
 ?>
+<style>
+	/* Hacemos la columna Usuario (2da) sticky en dispositivos móviles */
+	@media (max-width: 767px) {
+		.table-sticky-custom th:nth-child(2) {
+			position: sticky !important;
+			left: 0;
+			background-color: #c61223 !important;
+			color: white !important;
+			z-index: 11 !important;
+			box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+		}
+		.table-sticky-custom td:nth-child(2) {
+			position: sticky !important;
+			left: 0;
+			background-color: #fff;
+			z-index: 10;
+			box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+		}
+		
+		/* Para que las celdas de subheader de comisionista no se vean raras con el sticky de abajo */
+		.table-sticky-custom td.sticky-subheader {
+			position: static !important;
+		}
+
+		/* Ampliar el input de monto para mejor usabilidad en móvil */
+		.monto-input {
+			min-width: 160px !important;
+			font-size: 16px !important; /* Evita zoom automático en iOS */
+		}
+	}
+</style>
 
 <div class="outer" style="width: 86vw;">
 	<div class="inner bg-container">

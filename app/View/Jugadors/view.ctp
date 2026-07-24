@@ -337,7 +337,7 @@
 										?>
 										<tr>
 											<td>Semana <?= $g['semana'] . " / " . $g['anio'] ?></td>
-											<td style="color: <?= $g['ganancia_neta'] >= 0 ? 'green' : 'red' ?>">$<?= number_format($g['ganancia_neta'], 2) ?></td>
+											<td style="color: <?= $g['ganancia_neta'] >= 0 ? 'red' : 'green' ?>">$<?= number_format($g['ganancia_neta'], 2) ?></td>
 										</tr>
 									<?php endforeach; ?>
 								<?php else: ?>
@@ -349,7 +349,7 @@
 								<tfoot>
 									<tr class="table-info" style="background-color: #d1ecf1;">
 										<td class="text-right"><strong>TOTAL:</strong></td>
-										<td><strong style="color: <?= $total_ganancias >= 0 ? 'green' : 'red' ?>; font-size: 1.2em;">
+										<td><strong style="color: <?= $total_ganancias >= 0 ? 'red' : 'green' ?>; font-size: 1.2em;">
 											$<?= number_format($total_ganancias, 2) ?>
 										</strong></td>
 									</tr>
