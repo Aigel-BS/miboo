@@ -134,7 +134,7 @@
 				MiBoo</h2>
 		</div>
 
-		<?= $this->Form->create('Liquidacion', array('url' => array('action' => 'liquidacion', $comisionista['Comisionista']['id']))) ?>
+		<?= $this->Form->create('Liquidacion', array('url' => array('controller' => 'comisionistas', 'action' => 'liquidacion', $comisionista['Comisionista']['id']))) ?>
 
 		<div class="row">
 			<div class="col-12">
@@ -189,9 +189,21 @@
 										</div>
 									</div>
 									<div class="row m-t-10">
-										<div class="col-8 text-right"><strong>Total Comisiones:</strong></div>
+										<div class="col-8 text-right"><strong>Total Comisiones (Brutas):</strong></div>
 										<div class="col-4 text-right"><strong
 												style="color: blue;">$<?= number_format($total_comision, 2) ?></strong>
+										</div>
+									</div>
+									<div class="row m-t-10">
+										<div class="col-8 text-right"><strong>Pagos Realizados a la Agencia:</strong></div>
+										<div class="col-4 text-right"><strong
+												style="color: orange;">$<?= number_format($total_pagos_comision, 2) ?></strong>
+										</div>
+									</div>
+									<div class="row m-t-10">
+										<div class="col-8 text-right"><strong>Comisiones Pendientes Netas:</strong></div>
+										<div class="col-4 text-right"><strong
+												style="color: blue;">$<?= number_format($comision_neta, 2) ?></strong>
 										</div>
 									</div>
 									<hr>
@@ -264,7 +276,7 @@
 ), array('inline' => false)); ?>
 
 <script>
-	var total_comision = <?= (float) $total_comision ?>;
+	var total_comision = <?= (float) $comision_neta ?>;
 
 	function recalcular() {
 		var subtotal_jugadores = 0;

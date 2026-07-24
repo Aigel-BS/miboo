@@ -334,6 +334,12 @@ echo $this->Html->script(
 		});
 		updateFooterTotals();
 		updateComisionistaTotals();
-	}();
+		
+		<?php if(isset($ya_cargado) && $ya_cargado): ?>
+			alert("Ya se ha cargado esta semana");
+			$('.monto-input').prop('readonly', true);
+			$('input[type="submit"]').prop('disabled', true).addClass('disabled');
+		<?php endif; ?>
+	});
 
 </script>

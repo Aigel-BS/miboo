@@ -66,9 +66,19 @@
 		min-height: 0;
 	}
 
-	#sample_1_wrapper>.row {
+	#sample_1_filter {
+		position: relative;
+		z-index: 99999999 !important;
+	}
+
+	#sample_1_wrapper>.row,
+	#sample_1_wrapper .dataTables_filter,
+	#sample_1_wrapper .dataTables_length,
+	#sample_1_wrapper .dt-buttons {
 		flex-shrink: 0;
-		/* Keep datatable controls (top and pagination) from shrinking */
+		position: relative;
+		z-index: 999;
+		/* Keep datatable controls (top and pagination) from shrinking and clickable */
 	}
 
 	#sample_1_wrapper .table-responsive {
@@ -77,7 +87,8 @@
 		overflow-y: scroll !important;
 		height: auto !important;
 		max-height: none !important;
-		/* Override any max-height from custom.css */
+		clear: both;
+		/* Override any max-height from custom.css and clear floats */
 	}
 </style>
 <?php
@@ -521,7 +532,7 @@ echo $this->Html->script(
 			/* Table tools samples: https://www.datatables.net/release-datatables/extras/TableTools/ */
 			/* Set tabletools buttons and button container */
 			table.DataTable({
-				dom: "Bflr<'table-responsive't><'row'<'col-md-5 col-12'i><'col-md-7 col-12'p>>",
+				dom: "Bflr<'table-responsive m-t-10't><'row'<'col-md-5 col-12'i><'col-md-7 col-12'p>>",
 				buttons: [
 					'copy', 'csv', 'print'
 				],

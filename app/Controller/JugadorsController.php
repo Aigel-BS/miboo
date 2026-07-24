@@ -90,6 +90,18 @@ class JugadorsController extends AppController {
 			$jugadores[$i]['Saldo'] = $saldo;
 			$i++;
 		}
+		
+		$semana_actual = date("W") - 1;
+		$anio_actual = date("Y");
+		$this->loadModel('Ganancia');
+		$conteo_ganancias = $this->Ganancia->find('count', array(
+			'conditions' => array(
+				'Ganancia.semana' => $semana_actual,
+				'Ganancia.anio' => $anio_actual
+			)
+		));
+		
+		$this->set('ya_cargado', $conteo_ganancias > 0);
 		$this->set('jugadores',$jugadores);
 	}
 
