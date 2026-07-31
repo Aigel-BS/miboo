@@ -188,18 +188,18 @@
 										<div class="col-4 text-right"><strong id="lbl_subtotal_jugadores">$0.00</strong>
 										</div>
 									</div>
-									<!-- <div class="row m-t-10">
+									<div class="row m-t-10" style="display: none;">
 										<div class="col-8 text-right"><strong>Total Comisiones (Brutas):</strong></div>
 										<div class="col-4 text-right"><strong
 												style="color: blue;">$<?= number_format($total_comision, 2) ?></strong>
 										</div>
 									</div>
-									<div class="row m-t-10">
+									<div class="row m-t-10" style="display: none;">
 										<div class="col-8 text-right"><strong>Pagos Realizados a la Agencia:</strong></div>
 										<div class="col-4 text-right"><strong
 												style="color: orange;">$<?= number_format($total_pagos_comision, 2) ?></strong>
 										</div>
-									</div> -->
+									</div>
 									<div class="row m-t-10">
 										<div class="col-8 text-right"><strong>Comisiones Pendientes Netas:</strong></div>
 										<div class="col-4 text-right"><strong
