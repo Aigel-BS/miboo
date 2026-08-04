@@ -47,6 +47,9 @@
 				border-left: 0 !important;
 				border-right: 0 !important;
 			}
+			#left {
+				z-index: 9999 !important;
+			}
 		}
 	</style>
 </head>
