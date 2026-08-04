@@ -311,7 +311,7 @@ class ComisionistasController extends AppController {
 				$pct_comision = $jugador_data['Jugador']['comision_comisionista'] ?: 2.5;
 				$comision_jug = 0;
 				if ($saldo_actual < 0) {
-					$comision_jug = abs($saldo_actual) * ($pct_comision / 100);
+					$comision_jug = floor(abs($saldo_actual) * ($pct_comision / 100));
 				}
 				$comision_actual += $comision_jug;
 				
@@ -398,7 +398,7 @@ class ComisionistasController extends AppController {
 			$pct_comision = $jug['Jugador']['comision_comisionista'] ?: 2.5;
 			$comision_jug = 0;
 			if ($saldo < 0) {
-				$comision_jug = abs($saldo) * ($pct_comision / 100);
+				$comision_jug = floor(abs($saldo) * ($pct_comision / 100));
 			}
 			
 			$total_comision += $comision_jug;
