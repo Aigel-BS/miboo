@@ -83,9 +83,9 @@ class DATABASE_CONFIG
 		'datasource' => 'Database/Mysql',
 		'persistent' => false,
 		'host' => 'localhost',
-		'login' => 'miboodb_test',
+		'login' => 'miboodb',
 		'password' => '!M1bo0.2025#Htyf567KJH',
-		'database' => 'miboodb_test',
+		'database' => 'admin_miboo',
 		'prefix' => '',
 		'encoding' => 'utf8',
 		'settings' => array(
