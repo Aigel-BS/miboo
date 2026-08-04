@@ -182,7 +182,7 @@ $formas_pago = array(
 											<?php
 											$saldo = 0;
 											foreach ($comisionista['Movimientos'] as $movimiento){
-												if ($movimiento['tipo_gasto'] == 'Comisión' && empty($movimiento['jugador_id'])) {
+												if (strpos($movimiento['tipo_gasto'], 'Comisi') !== false && empty($movimiento['jugador_id'])) {
 													if ($movimiento['tipo_movimiento'] == 2) {
 														$saldo -= $movimiento['monto'];
 													} else if ($movimiento['tipo_movimiento'] == 1) {

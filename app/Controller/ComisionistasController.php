@@ -308,10 +308,11 @@ class ComisionistasController extends AppController {
 				$saldo_actual = $saldo_inicial_jug + $saldo_movs + $saldo_gans;
 				$total_jugadores += $saldo_actual;
 				
-				$comision_query = $this->Ganancia->query("
-					SELECT SUM(comision) as total FROM ganancias WHERE jugador_id = ".$jugador_id
-				);
-				$comision_jug = isset($comision_query[0][0]['total']) ? $comision_query[0][0]['total'] : 0;
+				$pct_comision = $jugador_data['Jugador']['comision_comisionista'] ?: 2.5;
+				$comision_jug = 0;
+				if ($saldo_actual < 0) {
+					$comision_jug = abs($saldo_actual) * ($pct_comision / 100);
+				}
 				$comision_actual += $comision_jug;
 				
 				if (round($saldo_actual, 2) != 0) {
@@ -331,17 +332,7 @@ class ComisionistasController extends AppController {
 				}
 			}
 			
-			$pagos_comision = $this->Movimiento->query("
-				SELECT SUM(
-					CASE WHEN tipo_movimiento = 1 THEN -monto
-					WHEN tipo_movimiento = 2 THEN monto ELSE 0 END
-				) as total 
-				FROM movimientos 
-				WHERE comisionista_id = ".$id." AND tipo_gasto = 'Comisión' AND (jugador_id IS NULL OR jugador_id = 0)
-			");
-			$total_pagos_comision = isset($pagos_comision[0][0]['total']) ? $pagos_comision[0][0]['total'] : 0;
-			
-			$comision_neta = $comision_actual - $total_pagos_comision;
+			$comision_neta = $comision_actual;
 
 			if (round($comision_neta, 2) != 0) {
 				$tipo_mov = ($comision_neta > 0) ? 2 : 1; // Si le debemos, Egreso (2). Si debe, Ingreso (1)
@@ -404,10 +395,11 @@ class ComisionistasController extends AppController {
 			$saldo_gans = isset($gans_jug[0][0]['total']) ? $gans_jug[0][0]['total'] : 0;
 			$saldo = $jug['Jugador']['saldo_inicial'] + $saldo_movs + $saldo_gans;
 			
-			$comision_query = $this->Ganancia->query("
-				SELECT SUM(comision) as total FROM ganancias WHERE jugador_id = ".$jug_id
-			);
-			$comision_jug = isset($comision_query[0][0]['total']) ? $comision_query[0][0]['total'] : 0;
+			$pct_comision = $jug['Jugador']['comision_comisionista'] ?: 2.5;
+			$comision_jug = 0;
+			if ($saldo < 0) {
+				$comision_jug = abs($saldo) * ($pct_comision / 100);
+			}
 			
 			$total_comision += $comision_jug;
 			
@@ -420,15 +412,7 @@ class ComisionistasController extends AppController {
 			);
 		}
 
-		$pagos_comision = $this->Movimiento->query("
-			SELECT SUM(
-				CASE WHEN tipo_movimiento = 1 THEN -monto
-				WHEN tipo_movimiento = 2 THEN monto ELSE 0 END
-			) as total 
-			FROM movimientos 
-			WHERE comisionista_id = ".$id." AND tipo_gasto = 'Comisión' AND (jugador_id IS NULL OR jugador_id = 0)
-		");
-		$total_pagos_comision = isset($pagos_comision[0][0]['total']) ? $pagos_comision[0][0]['total'] : 0;
+		$total_pagos_comision = 0;
 
 		$cuentas = $this->Cuenta->find('list', array(
 			'conditions' => array('Cuenta.jugador_id IS NULL', 'Cuenta.comisionista_id IS NULL', 'Cuenta.estado' => 1)

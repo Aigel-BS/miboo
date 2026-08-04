@@ -65,6 +65,44 @@ $tipo_gasto = array(
 	</div>
 </div>
 
+<div class="modal fade" id="editPago" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog" style="max-width:900px !important">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabelEdit" style="color:black">
+					<i class="fa fa-pencil"></i>
+					Editar Movimiento
+				</h4>
+			</div>
+			<?= $this->Form->create('Movimiento', array('url' => array('action' => 'edit', 'controller' => 'movimientos'), 'class' => 'form-horizontal', 'id' => 'formEditPago')) ?>
+			<div class="modal-body">
+				<div class="form-group row">
+					<div class="col-12">
+						<h4>Cuenta: <?= $cuenta['Cuenta']['nombre'] ?></h4>
+					</div>
+					<?= $this->Form->input('referencia', array('type' => 'text', 'class' => 'form-control', 'div' => 'col-md-8', 'required' => true, 'label' => 'Referencia', 'id' => 'edit_referencia')); ?>
+					<?= $this->Form->input('tipo_gasto', array('type' => 'select', 'options' => $tipo_gasto, 'class' => 'form-control', 'div' => 'col-md-4', 'required' => true, 'label' => 'Tipo de Gasto', 'id' => 'edit_tipo_gasto')); ?>
+					<?= $this->Form->input('monto', array('type' => 'number', 'step' => 0.01, 'class' => 'form-control', 'div' => 'col-md-4', 'required' => true, 'label' => 'Monto', 'id' => 'edit_monto')); ?>
+					<?= $this->Form->input('tipo_movimiento', array('type' => 'select', 'options' => array(1 => 'Ingreso', 2 => 'Egreso'), 'empty' => 'Seleccionar Tipo Movimiento', 'required' => true, 'class' => 'form-control', 'div' => 'col-md-4', 'label' => 'Ingreso / Egreso', 'id' => 'edit_tipo_movimiento')); ?>
+					<?= $this->Form->input('fecha_aplicacion', array('type' => 'text', 'class' => 'form-control fecha', 'div' => 'col-md-4', 'label' => 'Fecha', 'id' => 'edit_fecha_aplicacion')); ?>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger float-xs-right" data-dismiss="modal">
+					Cerrar
+					<i class="fa fa-times"></i>
+				</button>
+				<?= $this->Form->hidden('id', array('id' => 'edit_id')) ?>
+				<?= $this->Form->hidden('url_redirect', array('value' => 2)) ?>
+				<?= $this->Form->hidden('cuenta_id', array('value' => $cuenta['Cuenta']['id'])) ?>
+				<?= $this->Form->submit('Guardar Cambios', array('class' => 'btn btn-success pull-left')) ?>
+			</div>
+			<?= $this->Form->end() ?>
+		</div>
+	</div>
+</div>
+
 <div class="outer" style="width: 86vw;">
 	<div class="inner bg-container">
 		<div class="row">
@@ -91,6 +129,7 @@ $tipo_gasto = array(
 									<th>Ingreso</th>
 									<th>Egreso</th>
 									<th>Balance</th>
+									<th>Editar</th>
 									<th>Verificar</th>
 									<th>Eliminar</th>
 								</tr>
@@ -137,6 +176,11 @@ $tipo_gasto = array(
 										$saldo = $saldo - ($movimiento['tipo_movimiento'] == 1 ? $movimiento['monto'] : ($movimiento['monto'] * -1));
 										?>
 
+										<td style="text-align: center">
+											<a href="javascript:void(0);" onclick="editarMovimiento(<?= $movimiento['id'] ?>, '<?= addslashes($movimiento['referencia']) ?>', '<?= $movimiento['tipo_gasto'] ?>', <?= $movimiento['monto'] ?>, <?= $movimiento['tipo_movimiento'] ?>, '<?= $movimiento['fecha_aplicacion'] ?>')" class="btn btn-sm btn-primary">
+												<i class="fa fa-pencil"></i>
+											</a>
+										</td>
 										<td style="text-align: center" id="link_<?= $movimiento['id'] ?>">
 											<?= ($movimiento['verificado']) ? "<i class='fa fa-check'></i>" : $this->Html->link('<i class="fa fa-check-circle-o"></i>', 'javascript:verificarMovimiento(' . $movimiento['id'] . ')', array('escape' => false)) ?></td>
 										<td style="text-align: center">
@@ -154,6 +198,16 @@ $tipo_gasto = array(
 <script>
 	function registrarPago() {
 		$('#addPago').modal('show');
+	}
+
+	function editarMovimiento(id, referencia, tipoGasto, monto, tipoMovimiento, fecha) {
+		$('#edit_id').val(id);
+		$('#edit_referencia').val(referencia);
+		$('#edit_tipo_gasto').val(tipoGasto).trigger('change');
+		$('#edit_monto').val(monto);
+		$('#edit_tipo_movimiento').val(tipoMovimiento).trigger('change');
+		$('#edit_fecha_aplicacion').val(fecha);
+		$('#editPago').modal('show');
 	}
 
 	function verificarMovimiento(id) {

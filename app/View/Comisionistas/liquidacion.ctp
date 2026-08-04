@@ -164,7 +164,7 @@
 									<tr>
 										<td class="no-print" style="text-align: center;">
 											<input type="checkbox" class="jugador-checkbox" name="jugadores[]"
-												value="<?= $jug['id'] ?>" data-saldo="<?= $jug['saldo'] ?>" checked>
+												value="<?= $jug['id'] ?>" data-saldo="<?= $jug['saldo'] ?>" data-comision="<?= $jug['comision'] ?>" checked>
 										</td>
 										<td><?= $jug['usuario'] ?></td>
 										<td><?= $jug['nombre'] ?></td>
@@ -195,14 +195,15 @@
 										</div>
 									</div>
 									<div class="row m-t-10" style="display: none;">
-										<div class="col-8 text-right"><strong>Pagos Realizados a la Agencia:</strong></div>
+										<div class="col-8 text-right"><strong>Pagos Realizados a la Agencia:</strong>
+										</div>
 										<div class="col-4 text-right"><strong
 												style="color: orange;">$<?= number_format($total_pagos_comision, 2) ?></strong>
 										</div>
 									</div>
 									<div class="row m-t-10">
-										<div class="col-8 text-right"><strong>Comisiones Pendientes Netas:</strong></div>
-										<div class="col-4 text-right"><strong
+										<div class="col-8 text-right"><strong>Comisiones:</strong></div>
+										<div class="col-4 text-right"><strong id="lbl_comision"
 												style="color: blue;">$<?= number_format($comision_neta, 2) ?></strong>
 										</div>
 									</div>
@@ -276,15 +277,16 @@
 ), array('inline' => false)); ?>
 
 <script>
-	var total_comision = <?= (float) $comision_neta ?>;
-
 	function recalcular() {
 		var subtotal_jugadores = 0;
+		var total_comision = 0;
 		$('.jugador-checkbox:checked').each(function () {
 			subtotal_jugadores += parseFloat($(this).data('saldo'));
+			total_comision += parseFloat($(this).data('comision'));
 		});
 
 		$('#lbl_subtotal_jugadores').text('$' + subtotal_jugadores.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+		$('#lbl_comision').text('$' + total_comision.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 
 		var book_jugadores = -subtotal_jugadores;
 		var book_comision = -total_comision;

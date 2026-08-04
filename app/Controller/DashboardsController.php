@@ -45,7 +45,7 @@ class DashboardsController extends AppController {
 			'conditions' => array_merge($condMov, array(
 				'Movimiento.jugador_id !=' => null,
 				'OR' => array(
-					'Movimiento.tipo_gasto !=' => 'OR',
+					'NOT' => array('Movimiento.tipo_gasto' => array('OR', 4)),
 					'Movimiento.tipo_gasto IS NULL'
 				)
 			))
@@ -63,7 +63,7 @@ class DashboardsController extends AppController {
 				),
 				'AND' => array(
 					'OR' => array(
-						'Movimiento.tipo_gasto !=' => 'OR',
+						'NOT' => array('Movimiento.tipo_gasto' => array('OR', 4)),
 						'Movimiento.tipo_gasto IS NULL'
 					)
 				)
@@ -95,7 +95,7 @@ class DashboardsController extends AppController {
 		$resAportacionesOR = $this->Movimiento->find('first', array(
 			'fields' => array('SUM(Movimiento.monto) as total'),
 			'conditions' => array_merge($condMov, array(
-				'Movimiento.tipo_gasto' => 'OR',
+				'Movimiento.tipo_gasto' => array('OR', 4),
 				'Movimiento.tipo_movimiento' => 1
 			))
 		));
@@ -105,7 +105,7 @@ class DashboardsController extends AppController {
 		$resRetirosOR = $this->Movimiento->find('first', array(
 			'fields' => array('SUM(Movimiento.monto) as total'),
 			'conditions' => array_merge($condMov, array(
-				'Movimiento.tipo_gasto' => 'OR',
+				'Movimiento.tipo_gasto' => array('OR', 4),
 				'Movimiento.tipo_movimiento' => 2
 			))
 		));

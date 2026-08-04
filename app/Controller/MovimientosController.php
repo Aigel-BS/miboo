@@ -24,6 +24,36 @@ class MovimientosController extends AppController {
 		}
 	}
 
+	public function edit() {
+		$this->loadModel('Movimiento');
+		if ($this->request->is('post') || $this->request->is('put')) {
+			$this->Movimiento->id = $this->request->data['Movimiento']['id'];
+			
+			// We only want to update specific fields
+			$fieldsToUpdate = array('referencia', 'tipo_gasto', 'monto', 'tipo_movimiento', 'fecha_aplicacion');
+			
+			if ($this->Movimiento->save($this->request->data, true, $fieldsToUpdate)) {
+				$this->Session->setFlash('El movimiento ha sido actualizado exitosamente.', 'default', array('class' => 'success_flash'));
+			} else {
+				$this->Session->setFlash('El movimiento no pudo ser actualizado.', 'default', array('class' => 'alert alert-danger'));
+			}
+			
+			switch ($this->request->data['Movimiento']['url_redirect']):
+				case 1: //Proviene de Jugadores Index
+					return $this->redirect(array('controller' => 'jugadors', 'action' => 'index'));
+					break;
+				case 2: // Proviene de Cuenta Bancaria View
+					return $this->redirect(array('controller' => 'cuentas', 'action' => 'view', $this->request->data['Movimiento']['cuenta_id']));
+					break;
+				case 3: // Proviene de Comisionistas Index
+					return $this->redirect(array('controller' => 'comisionistas', 'action' => 'index'));
+					break;
+				default:
+					return $this->redirect(array('controller' => 'cuentas', 'action' => 'index'));
+			endswitch;
+		}
+	}
+
 	public function transferencia() {
 		if ($this->request->is('post')) {
 			$data = $this->request->data['Movimiento'];
