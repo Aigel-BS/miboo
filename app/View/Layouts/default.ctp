@@ -47,16 +47,12 @@
 				border-left: 0 !important;
 				border-right: 0 !important;
 			}
-			#left {
-				z-index: 9999 !important;
-			}
-			.dataTables_wrapper .dt-buttons,
-			.dataTables_wrapper .dataTables_filter,
-			.dataTables_wrapper .dataTables_length,
-			.dataTables_wrapper .dataTables_info,
-			.dataTables_wrapper .dataTables_paginate {
-				position: static !important;
-				z-index: 1 !important;
+			/* FIX OVERLAP ON MOBILE MENU */
+			body.sidebar-left-opened #left {
+				position: fixed !important;
+				z-index: 99999 !important;
+				height: 100vh !important;
+				box-shadow: 2px 0 10px rgba(0,0,0,0.5);
 			}
 		}
 	</style>
