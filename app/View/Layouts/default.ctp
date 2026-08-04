@@ -50,6 +50,14 @@
 			#left {
 				z-index: 9999 !important;
 			}
+			.dataTables_wrapper .dt-buttons,
+			.dataTables_wrapper .dataTables_filter,
+			.dataTables_wrapper .dataTables_length,
+			.dataTables_wrapper .dataTables_info,
+			.dataTables_wrapper .dataTables_paginate {
+				position: static !important;
+				z-index: 1 !important;
+			}
 		}
 	</style>
 </head>
