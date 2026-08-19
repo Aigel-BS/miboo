@@ -22,8 +22,6 @@ $formas_pago = array(
 $tipo_gasto = array(
 	'Gasto',
 	'Sueldo',
-	'Aportación',
-	'Retiro',
 	'OR'
 );
 ?>
@@ -165,9 +163,12 @@ $tipo_gasto = array(
 									<tr>
 										<td><?= $movimiento['referencia'] ?></td>
 										<td data-sort="<?= date("ymd", strtotime($movimiento['fecha_aplicacion'])) ?>">
-											<?= $movimiento['fecha_aplicacion'] ?></td>
-										<td><?= $movimiento['tipo_movimiento'] == 1 ? "$" . number_format($movimiento['monto'], 2) : "" ?></td>
-										<td><?= $movimiento['tipo_movimiento'] == 2 ? "$" . number_format($movimiento['monto'], 2) : "" ?></td>
+											<?= $movimiento['fecha_aplicacion'] ?>
+										</td>
+										<td><?= $movimiento['tipo_movimiento'] == 1 ? "$" . number_format($movimiento['monto'], 2) : "" ?>
+										</td>
+										<td><?= $movimiento['tipo_movimiento'] == 2 ? "$" . number_format($movimiento['monto'], 2) : "" ?>
+										</td>
 										<td>$<?= number_format($saldo, 2) ?></td>
 
 										<?php
@@ -177,14 +178,18 @@ $tipo_gasto = array(
 										?>
 
 										<td style="text-align: center">
-											<a href="javascript:void(0);" onclick="editarMovimiento(<?= $movimiento['id'] ?>, '<?= addslashes($movimiento['referencia']) ?>', '<?= $movimiento['tipo_gasto'] ?>', <?= $movimiento['monto'] ?>, <?= $movimiento['tipo_movimiento'] ?>, '<?= $movimiento['fecha_aplicacion'] ?>')" class="btn btn-sm btn-primary">
+											<a href="javascript:void(0);"
+												onclick="editarMovimiento(<?= $movimiento['id'] ?>, '<?= addslashes($movimiento['referencia']) ?>', '<?= $movimiento['tipo_gasto'] ?>', <?= $movimiento['monto'] ?>, <?= $movimiento['tipo_movimiento'] ?>, '<?= $movimiento['fecha_aplicacion'] ?>')"
+												class="btn btn-sm btn-primary">
 												<i class="fa fa-pencil"></i>
 											</a>
 										</td>
 										<td style="text-align: center" id="link_<?= $movimiento['id'] ?>">
-											<?= ($movimiento['verificado']) ? "<i class='fa fa-check'></i>" : $this->Html->link('<i class="fa fa-check-circle-o"></i>', 'javascript:verificarMovimiento(' . $movimiento['id'] . ')', array('escape' => false)) ?></td>
+											<?= ($movimiento['verificado']) ? "<i class='fa fa-check'></i>" : $this->Html->link('<i class="fa fa-check-circle-o"></i>', 'javascript:verificarMovimiento(' . $movimiento['id'] . ')', array('escape' => false)) ?>
+										</td>
 										<td style="text-align: center">
-											<?= $this->Html->link('<i class="fa fa-trash"></i>', array('action' => 'delete', 'controller' => 'movimientos', $movimiento['id'], $movimiento['cuenta_id']), array('confirm' => '¿Deseas eliminar este movimiento?', 'escape' => false)) ?></td>
+											<?= $this->Html->link('<i class="fa fa-trash"></i>', array('action' => 'delete', 'controller' => 'movimientos', $movimiento['id'], $movimiento['cuenta_id']), array('confirm' => '¿Deseas eliminar este movimiento?', 'escape' => false)) ?>
+										</td>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
