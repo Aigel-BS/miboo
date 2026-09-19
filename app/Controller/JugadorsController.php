@@ -254,11 +254,13 @@ class JugadorsController extends AppController {
 	}
 
 	function getDuplicado(){
-		$valor = $this->request->data['str'];
+		$valor = trim($this->request->data['str']);
 		$mensaje = 0;
-		$duplicados = $this->Jugador->find('count',array('conditions'=>array('OR'=>array('Jugador.celular'=>$valor, 'Jugador.email'=>$valor))));
-		if($duplicados > 0){
-			$mensaje = 1;
+		if (!empty($valor)) {
+			$duplicados = $this->Jugador->find('count',array('conditions'=>array('OR'=>array('Jugador.celular'=>$valor, 'Jugador.email'=>$valor))));
+			if($duplicados > 0){
+				$mensaje = 1;
+			}
 		}
 		header('Content-Type: application/json');
 		echo json_encode($mensaje);

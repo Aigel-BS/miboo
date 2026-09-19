@@ -68,7 +68,7 @@
 
 	#sample_1_filter {
 		position: relative;
-		z-index: 99999999 !important;
+		z-index: 100 !important;
 	}
 
 	#sample_1_wrapper>.row,
@@ -119,8 +119,8 @@ $formas_pago = array(
 					<?= $this->Form->input('usuario', array('type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Usuario', )); ?>
 					<?= $this->Form->input('registro', array('type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Registro', )); ?>
 					<?= $this->Form->input('password', array('type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => 'Contraseña', )); ?>
-					<?= $this->Form->input('email', array('onchange' => 'javascript:validarDuplicado(this,1)', 'type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => array('text' => 'Email', 'id' => 'emailLabel'))); ?>
-					<?= $this->Form->input('celular', array('onchange' => 'javascript:validarDuplicado(this,2)', 'type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => true, 'label' => array('text' => 'Celular', 'id' => 'celularLabel'))); ?>
+					<?= $this->Form->input('email', array('onchange' => 'javascript:validarDuplicado(this,1)', 'type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => false, 'label' => array('text' => 'Email', 'id' => 'emailLabel'))); ?>
+					<?= $this->Form->input('celular', array('onchange' => 'javascript:validarDuplicado(this,2)', 'type' => 'text', 'class' => 'form-control', 'div' => 'col-md-6', 'required' => false, 'label' => array('text' => 'Celular', 'id' => 'celularLabel'))); ?>
 					<?= $this->Form->input('credito', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Crédito', )); ?>
 					<?= $this->Form->input('maxima', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Máxima', 'min' => '0', )); ?>
 					<?= $this->Form->input('minima', array('type' => 'number', 'class' => 'form-control', 'div' => 'col-md-6', 'label' => 'Mínima', 'min' => '0', )); ?>

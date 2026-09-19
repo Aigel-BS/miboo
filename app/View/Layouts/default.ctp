@@ -23,6 +23,14 @@
 	<?= $this->fetch('css')?>
 
 	<style>
+		/* Evitar que Datatables sobresalga por encima de los Modales */
+		.dataTables_wrapper .dataTables_filter,
+		.dataTables_wrapper .dt-buttons,
+		.dataTables_wrapper .dataTables_length {
+			position: static !important;
+			z-index: 1 !important;
+		}
+
 		@media (max-width: 768px) {
 			.outer {
 				width: 100% !important;
@@ -113,6 +121,12 @@
 <!--  plugin scripts -->
 <?= $this->fetch('script')?>
 <!--end of plugin scripts-->
+<script>
+	$(document).ready(function() {
+		// Mover todos los modales al final del body para evitar conflictos de z-index
+		$('.modal').appendTo('body');
+	});
+</script>
 </body>
 
 </html>

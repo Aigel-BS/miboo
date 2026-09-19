@@ -311,7 +311,14 @@ class ComisionistasController extends AppController {
 				$pct_comision = $jugador_data['Jugador']['comision_comisionista'] ?: 2.5;
 				$comision_jug = 0;
 				if ($saldo_actual < 0) {
-					$comision_jug = floor(abs($saldo_actual) * ($pct_comision / 100));
+					$tipo_calculo = isset($comisionista['Comisionista']['tipo_calculo_comision']) ? $comisionista['Comisionista']['tipo_calculo_comision'] : 0;
+					if ($tipo_calculo == 1) {
+						$descuento = $jugador_data['Jugador']['descuento_2'] ?: 0;
+						$base_comision = ($descuento < 100) ? (abs($saldo_actual) / ((100 - $descuento) / 100)) : abs($saldo_actual);
+					} else {
+						$base_comision = abs($saldo_actual);
+					}
+					$comision_jug = floor($base_comision * ($pct_comision / 100));
 				}
 				$comision_actual += $comision_jug;
 				
@@ -398,7 +405,14 @@ class ComisionistasController extends AppController {
 			$pct_comision = $jug['Jugador']['comision_comisionista'] ?: 2.5;
 			$comision_jug = 0;
 			if ($saldo < 0) {
-				$comision_jug = floor(abs($saldo) * ($pct_comision / 100));
+				$tipo_calculo = isset($comisionista['Comisionista']['tipo_calculo_comision']) ? $comisionista['Comisionista']['tipo_calculo_comision'] : 0;
+				if ($tipo_calculo == 1) {
+					$descuento = $jug['Jugador']['descuento_2'] ?: 0;
+					$base_comision = ($descuento < 100) ? (abs($saldo) / ((100 - $descuento) / 100)) : abs($saldo);
+				} else {
+					$base_comision = abs($saldo);
+				}
+				$comision_jug = floor($base_comision * ($pct_comision / 100));
 			}
 			
 			$total_comision += $comision_jug;

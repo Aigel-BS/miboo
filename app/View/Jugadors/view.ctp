@@ -47,8 +47,8 @@
 					<?= $this->Form->input('registro',array('value'=>$jugador['Jugador']['usuario'],'type'=>'text','class'=>'form-control','div'=>'col-md-6','label'=>'Usuario',));?>
 					<?= $this->Form->input('registro',array('value'=>$jugador['Jugador']['registro'],'type'=>'text','class'=>'form-control','div'=>'col-md-6','label'=>'Registro',));?>
 					<?= $this->Form->input('password',array('value'=>$jugador['Jugador']['password'],'type'=>'text','class'=>'form-control','div'=>'col-md-6','label'=>'Password',));?>
-					<?= $this->Form->input('email',array('value'=>$jugador['Jugador']['email'],'type'=>'text','class'=>'form-control','div'=>'col-md-6','label'=>'Email',));?>
-					<?= $this->Form->input('celular',array('value'=>$jugador['Jugador']['celular'],'type'=>'text','class'=>'form-control','div'=>'col-md-6','label'=>'Celular',));?>
+					<?= $this->Form->input('email',array('value'=>$jugador['Jugador']['email'],'type'=>'text','class'=>'form-control','div'=>'col-md-6','required'=>false,'label'=>'Email',));?>
+					<?= $this->Form->input('celular',array('value'=>$jugador['Jugador']['celular'],'type'=>'text','class'=>'form-control','div'=>'col-md-6','required'=>false,'label'=>'Celular',));?>
 					<?= $this->Form->input('credito',array('value'=>$jugador['Jugador']['credito'],'type'=>'number','class'=>'form-control','div'=>'col-md-6','label'=>'Crédito',));?>
 					<?= $this->Form->input('maxima',array('value'=>$jugador['Jugador']['maxima'],'type'=>'number','class'=>'form-control','div'=>'col-md-6','label'=>'Máxima','min'=>'0',));?>
 					<?= $this->Form->input('minima',array('value'=>$jugador['Jugador']['minima'],'type'=>'number','class'=>'form-control','div'=>'col-md-6','label'=>'Mínima','min'=>'0',));?>

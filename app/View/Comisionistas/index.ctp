@@ -51,6 +51,7 @@ $formas_pago = array(
 					<?= $this->Form->input('celular',array('type'=>'text','class'=>'form-control','div'=>'col-md-6','label'=>'Celular',));?>
 					<?= $this->Form->input('esquema',array('type'=>'text','class'=>'form-control','div'=>'col-md-6','label'=>'Esquema',));?>
 					<?= $this->Form->input('forma_pago',array('type'=>'select','options'=>$formas_pago,'class'=>'form-control','div'=>'col-md-6','label'=>'Forma de Pago',));?>
+					<?= $this->Form->input('tipo_calculo_comision',array('type'=>'select','options'=>array(0=>'Después del descuento',1=>'Antes del descuento'),'class'=>'form-control','div'=>'col-md-6','label'=>'Tipo de cálculo de comisión',));?>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -86,6 +87,7 @@ $formas_pago = array(
 					<?= $this->Form->input('celular',array('id'=>'edit_celular','type'=>'text','class'=>'form-control','div'=>'col-md-6','label'=>'Celular',));?>
 					<?= $this->Form->input('forma_pago',array('id'=>'edit_forma_pago','type'=>'select','options'=>$formas_pago,'empty'=>'Seleccionar Forma de Pago','class'=>'form-control','div'=>'col-md-6','label'=>'Forma de Pago',));?>
 					<?= $this->Form->input('esquema',array('id'=>'edit_esquema','type'=>'text','class'=>'form-control','div'=>'col-md-6','label'=>'Esquema',));?>
+					<?= $this->Form->input('tipo_calculo_comision',array('id'=>'edit_tipo_calculo_comision','type'=>'select','options'=>array(0=>'Después del descuento',1=>'Antes del descuento'),'class'=>'form-control','div'=>'col-md-6','label'=>'Tipo de cálculo de comisión',));?>
 				</div>
 
 			</div>
@@ -279,6 +281,7 @@ echo $this->Html->script(
 				document.getElementById('edit_celular').value = html.Comisionista.celular;
 				document.getElementById('edit_forma_pago').value = html.Comisionista.forma_pago;
 				document.getElementById('edit_esquema').value = html.Comisionista.esquema;
+				document.getElementById('edit_tipo_calculo_comision').value = (html.Comisionista.tipo_calculo_comision == true || html.Comisionista.tipo_calculo_comision == 1) ? 1 : 0;
 			}
 		});
 	}

@@ -87,10 +87,11 @@ $formas_pago = array(
 											// Generamos un ID único para el total del comisionista
 											$comisionista_id = $jugador['Comisionista']['id'];
 											$display_name = $jugador['Comisionista']['usuario'];
+											$tipo_calculo_str = $jugador['Comisionista']['tipo_calculo_comision'] == 1 ? 'Antes del descuento' : 'Después del descuento';
 
 											echo "<tr class='comisionista-row' id='comisionista_row_{$comisionista_id}'>";
 											// La sumatoria se mostrará en este <td>
-											echo "<td class='sticky-subheader' colspan='4' style='background-color: black; color:white; text-align: left; font-weight: bold;'>Comisionista: {$display_name}</td>";
+											echo "<td class='sticky-subheader' colspan='4' style='background-color: black; color:white; text-align: left; font-weight: bold;'>Comisionista: {$display_name} ({$tipo_calculo_str})</td>";
 											// ID donde aparecerá el monto total del comisionista
 											echo "<td class='sticky-subheader' colspan='9' style='background-color: black; color:white; text-align: right; font-weight: bold;'>Total Monto: <span id='total_comisionista_{$comisionista_id}'>$0.00</span></td>";
 											echo "</tr>";
@@ -126,6 +127,7 @@ $formas_pago = array(
 											<td>
 												<?= $this->Form->hidden('comision_value_' . $i, array('id' => 'comision_value_' . $i, 'value' => ($jugador['Jugador']['comision_comisionista'] / 100))) ?>
 												<?= $this->Form->hidden('comisionista_id_' . $i, array('id' => 'comisionista_id_' . $i, 'value' => $jugador['Comisionista']['id'])) ?>
+												<?= $this->Form->hidden('tipo_calculo_comision_' . $i, array('id' => 'tipo_calculo_comision_' . $i, 'value' => $jugador['Comisionista']['tipo_calculo_comision'])) ?>
 												<?= $this->Form->input('comision_' . $i, array('id' => 'comision_' . $i, 'type' => 'number', 'class' => 'form-control', 'div' => 'col-md-10', 'readonly' => true, 'label' => false)) ?>
 											</td>
 										</tr>
@@ -280,7 +282,9 @@ $formas_pago = array(
 		var estilo_total = "color:darkgreen";
 		if (total < 0) {
 			estilo_pagar = "color:darkgreen";
-			document.getElementById('comision_' + row).value = Math.floor((total * document.getElementById('comision_value_' + row).value) * -1);
+			var tipo_calculo = document.getElementById('tipo_calculo_comision_' + row) ? document.getElementById('tipo_calculo_comision_' + row).value : 0;
+			var base_comision = (tipo_calculo == 1) ? Number(document.getElementById('monto_' + row).value) : total;
+			document.getElementById('comision_' + row).value = Math.floor((base_comision * document.getElementById('comision_value_' + row).value) * -1);
 		} else {
 			document.getElementById('comision_' + row).value = 0;
 		}
